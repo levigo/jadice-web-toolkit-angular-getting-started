@@ -19,28 +19,18 @@ and that has many features like thumbnails, printing and annotations.
 
 
 
-## the current commit: ##
-### Step 1 of 2: upgraded versions once again ###
-* manually upgrade the previous jadice web viewer version in the pom.xml and package.json files
-* run ```npm install``` so that the changes are applied also to the package-lock.json
-* weave in the dependabot pull request
-* run a ```npm audit fix``` to apply further security fixes
-* # JwvGettingStarted
-
-### Step 2 of 2: the real thing ###
-Steps in this commit: replace the dummy frontend with a simple viewer version
-After checking out this commit, please build both client and server and then run them.
-You will now see a viewer when openening ``localhost:4200``, that can now display documents, once you upload a document via the ``open file``file button in the upper left corner.
-This is done by the two jadice web viewer components included in the ``app.component.html`` file. The necessary wiring of those and releated code is found in the ``app.component.ts``
-Inside the main.ts, we bootstrap the precursor which will serve as a layer between angular and GWT.
+### the current commit: ###
+added functionality
+* annotations
+* thumbnail view
+* enhanced open file dialogue
+* simple reading mode
 
 ### previous commits: ###
 please check the README.md of that specific commit
 
 
 ## how to run this commit ##
-see the previous commit "install all necessary dependencies for the client" for how to start the client.
-
-You also need to run the backend:
-tutorial-001/server/src/main/java/org/jadice/jwv/tutorial/JadiceWebViewerApplication001.java
-(ensure that your classpath is set correctly there to the jwv-tutorial-001 server directory)
+The client should be set up like described in the previous commit.
+For the server, run org.jadice.jwv.tutorial.JadiceWebViewerApplication001 as spring boot application with the classpath set to the subfolder tutorial-001/server of this project. 
+After that, you need to navigate to localhost:4200 as final step.

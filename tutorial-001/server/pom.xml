@@ -29,6 +29,12 @@
     </dependency>
 
     <dependency>
+      <groupId>com.levigo.jadice.webtoolkit</groupId>
+      <artifactId>webtoolkit-export</artifactId>
+      <version>${jwv.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <scope>provided</scope>
