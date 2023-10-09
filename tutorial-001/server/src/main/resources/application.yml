@@ -8,10 +8,7 @@ management:
     port: 8000
     addApplicationContextHeader: false
   endpoints:
-    web:
-      exposure:
-        include: health, metrics, info
-
+    web.exposure.include: "*"
   endpoint:
     health:
       show-details: ALWAYS
@@ -25,6 +22,11 @@ spring:
 webtoolkit:
   clientConfiguration:
     maxUploadFileSize: 50000000
+    internalCustomProperties:
+      displayOpenFileAtStartup: "false"
+
+  fileUploadEnabled: true
+  uriProviderHttpEnabled: true
 
 logging:
   level:

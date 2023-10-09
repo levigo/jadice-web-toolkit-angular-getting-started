@@ -1,0 +1,12 @@
+<jadice-common-toolbar [provider]="viewerComponent" [config]="TOOLBAR_CONFIG"></jadice-common-toolbar>
+<div class="main-row">
+    <jwt-multi-mode-viewer #viewerComponent
+                           (sourceChanged)="source = $event"
+                           [source]="source">
+    </jwt-multi-mode-viewer>
+</div>
+<jwt-open-file-modal *ngIf="displayOpenFile"
+                     (fileRequested)="openFile($event)"
+                     (closeRequested)="displayOpenFile = false"></jwt-open-file-modal>
+
+<jwt-upload-dialogs-wrapper #uploadDialogsWrapper></jwt-upload-dialogs-wrapper>
