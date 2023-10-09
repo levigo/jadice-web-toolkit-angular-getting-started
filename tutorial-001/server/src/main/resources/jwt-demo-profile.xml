@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- <pre> Copyright (c), levigo holding gmbh. This file is subject to the terms and conditions defined in file 'LICENSE.txt',
+  which is part of this source code package. </pre> -->
+<!-- ############################################################################### -->
+<!-- ## Jadice Annotation Profile -->
+<!-- ############################################################################### -->
+
+<annotation-profile name="JWT-Demo-Profile" extends="JWT-Default">
+
+    <annotation-type name="TextHighlight" archetype="TextHighlight"
+                     class="com.levigo.jadice.annotation.TextHighlightAnnotation">
+        <renderer toolkit="swing"
+                  class="com.levigo.jadice.annotation.internal.renderer.TextHighlightAnnotationRenderer"/>
+        <renderer toolkit="gwt"
+                  class="com.levigo.jadice.web.client.renderer.internal.annotation.TextHighlightAnnotationRenderer"/>
+        <wrangler toolkit="gwt"
+                  class="com.levigo.jadice.web.client.internal.annotation.wrangler.TextHighlightAnnotationWrangler"/>
+
+        <labels>
+            <label locale="en">Highlight Text</label>
+            <label locale="de">Textmarkierung</label>
+            <label locale="fr">Texte surligné</label>
+            <label locale="it">Testo evidenziato</label>
+        </labels>
+
+        <fixed name="filled" propertyType="java.lang.Boolean">
+            <default>true</default>
+        </fixed>
+
+        <fixed name="linePainted" propertyType="java.lang.Boolean">
+            <default>true</default>
+        </fixed>
+
+        <unrestricted name="underscored"
+                      propertyType="java.lang.Boolean">
+            <labels>
+                <label locale="en">Underscored</label>
+                <label locale="de">Unterstrichen</label>
+                <label locale="fr">Souligné</label>
+                <label locale="it">Sottolineato</label>
+            </labels>
+            <editor toolkit="gwt"
+                    class="com.levigo.jadice.web.client.internal.annotation.editor.ToggleEditor">
+                <property name="iconName">underscore</property>
+            </editor>
+            <default>false</default>
+        </unrestricted>
+
+        <unrestricted name="strikethrough"
+                      propertyType="java.lang.Boolean">
+            <labels>
+                <label locale="en">Strikethrough</label>
+                <label locale="de">Durchgestrichen</label>
+                <label locale="fr">Biffé</label>
+                <label locale="it">Barrato</label>
+            </labels>
+            <editor toolkit="gwt"
+                    class="com.levigo.jadice.web.client.internal.annotation.editor.ToggleEditor">
+                <property name="iconName">strikethrough</property>
+            </editor>
+            <default>false</default>
+        </unrestricted>
+
+        <unrestricted name="highlighted"
+                      propertyType="java.lang.Boolean">
+            <labels>
+                <label locale="en">Highlighted</label>
+                <label locale="de">Markiert</label>
+                <label locale="fr">Surligné</label>
+                <label locale="it">Evidenziato</label>
+            </labels>
+            <editor toolkit="gwt"
+                    class="com.levigo.jadice.web.client.internal.annotation.editor.ToggleEditor">
+                <property name="iconName">transparency</property>
+            </editor>
+            <default>true</default>
+        </unrestricted>
+
+        <range name="lineWidth" propertyType="java.lang.Float">
+            <labels>
+                <label locale="en">Line width</label>
+                <label locale="de">Liniendicke</label>
+                <label locale="fr">Largeur de ligne</label>
+                <label locale="it">Larghezza linea</label>
+            </labels>
+            <default>1.0</default>
+            <editor toolkit="gwt"
+                    class="com.levigo.jadice.web.client.internal.annotation.editor.LineWidthEditor">
+                <property name="iconName">width</property>
+            </editor>
+            <preferred>0</preferred>
+            <preferred>1.0</preferred>
+            <preferred>3.0</preferred>
+            <preferred>5.0</preferred>
+            <minimum>0.0</minimum>
+            <maximum>10.0</maximum>
+        </range>
+
+        <color name="strokeColor" allow-transparency="true">
+            <labels>
+                <label locale="en">Stroke color</label>
+                <label locale="de">Linienfarbe</label>
+                <label locale="fr">Couleur des lignes</label>
+                <label locale="it">Colore linea</label>
+            </labels>
+            <editor toolkit="gwt"
+                    class="com.levigo.jadice.web.client.internal.annotation.editor.ColorEditor">
+                <property name="iconName">strokeColor</property>
+            </editor>
+
+            <default>#7fff0000</default>
+
+            <preferred>#40ff0000</preferred>
+            <preferred>#4000ff00</preferred>
+            <preferred>#400000ff</preferred>
+            <preferred>#4000ffff</preferred>
+            <preferred>#40ff00ff</preferred>
+            <preferred>#40ffff00</preferred>
+            <preferred>#40000000</preferred>
+            <preferred>#40ffffff</preferred>
+
+            <preferred>#80ff0000</preferred>
+            <preferred>#8000ff00</preferred>
+            <preferred>#800000ff</preferred>
+            <preferred>#8000ffff</preferred>
+            <preferred>#80ff00ff</preferred>
+            <preferred>#80ffff00</preferred>
+            <preferred>#80000000</preferred>
+            <preferred>#80ffffff</preferred>
+
+            <preferred>#c0ff0000</preferred>
+            <preferred>#c000ff00</preferred>
+            <preferred>#c00000ff</preferred>
+            <preferred>#c000ffff</preferred>
+            <preferred>#c0ff00ff</preferred>
+            <preferred>#c0ffff00</preferred>
+            <preferred>#c0000000</preferred>
+            <preferred>#c0ffffff</preferred>
+
+            <preferred>#ff0000</preferred>
+            <preferred>#00ff00</preferred>
+            <preferred>#0000ff</preferred>
+            <preferred>#00ffff</preferred>
+            <preferred>#ff00ff</preferred>
+            <preferred>#ffff00</preferred>
+            <preferred>#000000</preferred>
+            <preferred>#ffffff</preferred>
+        </color>
+
+        <color name="fillColor" allow-transparency="true">
+            <labels>
+                <label locale="en">Highlight color</label>
+                <label locale="de">Markierungsfarbe</label>
+                <label locale="fr">Couleur de surlignage</label>
+                <label locale="it">Colore evidenziazione</label>
+            </labels>
+            <editor toolkit="gwt"
+                    class="com.levigo.jadice.web.client.internal.annotation.editor.ColorEditor">
+                <property name="iconName">fillColor</property>
+            </editor>
+
+            <default>#7fffff00</default>
+
+            <preferred>#40ff0000</preferred>
+            <preferred>#4000ff00</preferred>
+            <preferred>#400000ff</preferred>
+            <preferred>#4000ffff</preferred>
+            <preferred>#40ff00ff</preferred>
+            <preferred>#40ffff00</preferred>
+            <preferred>#40000000</preferred>
+            <preferred>#40ffffff</preferred>
+
+            <preferred>#80ff0000</preferred>
+            <preferred>#8000ff00</preferred>
+            <preferred>#800000ff</preferred>
+            <preferred>#8000ffff</preferred>
+            <preferred>#80ff00ff</preferred>
+            <preferred>#80ffff00</preferred>
+            <preferred>#80000000</preferred>
+            <preferred>#80ffffff</preferred>
+
+            <preferred>#c0ff0000</preferred>
+            <preferred>#c000ff00</preferred>
+            <preferred>#c00000ff</preferred>
+            <preferred>#c000ffff</preferred>
+            <preferred>#c0ff00ff</preferred>
+            <preferred>#c0ffff00</preferred>
+            <preferred>#c0000000</preferred>
+            <preferred>#c0ffffff</preferred>
+
+            <preferred>#ff0000</preferred>
+            <preferred>#00ff00</preferred>
+            <preferred>#0000ff</preferred>
+            <preferred>#00ffff</preferred>
+            <preferred>#ff00ff</preferred>
+            <preferred>#ffff00</preferred>
+            <preferred>#000000</preferred>
+            <preferred>#ffffff</preferred>
+        </color>
+
+    <unrestricted name="areas" propertyType="java.util.List"/>
+  </annotation-type>
+
+    <annotation-type name="TextMask" archetype="TextMask"
+                   class="com.levigo.jadice.annotation.TextHighlightAnnotation">
+    <renderer toolkit="swing"
+              class="com.levigo.jadice.annotation.internal.renderer.TextHighlightAnnotationRenderer"/>
+    <renderer toolkit="gwt"
+              class="com.levigo.jadice.web.client.renderer.internal.annotation.TextHighlightAnnotationRenderer"/>
+    <wrangler toolkit="gwt"
+              class="com.levigo.jadice.web.client.internal.annotation.wrangler.TextHighlightAnnotationWrangler"/>
+
+    <labels>
+      <label locale="en">Mask text</label>
+      <label locale="de">Text schwärzen</label>
+      <label locale="fr">noircir le texte</label>
+      <label locale="it">Testo nero</label>
+    </labels>
+
+    <fixed name="filled" propertyType="java.lang.Boolean">
+      <default>true</default>
+    </fixed>
+
+    <fixed name="linePainted" propertyType="java.lang.Boolean">
+      <default>true</default>
+    </fixed>
+
+    <fixed name="highlighted"
+           propertyType="java.lang.Boolean">
+      <default>true</default>
+    </fixed>
+
+    <color name="fillColor" allow-transparency="true">
+      <default>#ff000000</default>
+    </color>
+
+    <unrestricted name="areas" propertyType="java.util.List"/>
+  </annotation-type>
+
+  <!-- ############################################################################### -->
+  <!-- ## Annotation toolbar definition -->
+    <!-- ############################################################################### -->
+
+    <type-set name="default">
+        <labels>
+            <label locale="en">Jadice Annotations</label>
+            <label locale="de">Jadice Annotationen</label>
+            <label locale="fr">Jadice Annotations</label>
+            <label locale="it">Annotazioni Jadice</label>
+        </labels>
+
+        <!-- <type ref="Image" /> -->
+        <type ref="Rectangle"/>
+        <type ref="Text"/>
+        <type ref="Mask"/>
+        <type ref="Highlight"/>
+        <type ref="Ellipse"/>
+        <type ref="Line"/>
+        <type ref="Arrow"/>
+        <type ref="Pen"/>
+
+        <type-set name="Polygons">
+            <labels>
+                <label locale="en">Polygons</label>
+                <label locale="de">Polygone</label>
+                <label locale="fr">Polygones</label>
+                <label locale="it">Poligoni</label>
+            </labels>
+            <type ref="Polygon"/>
+            <type ref="BasePolygonClosed"/>
+            <type ref="PolygonFilled"/>
+        </type-set>
+
+        <type-set name="Stamps">
+            <labels>
+                <label locale="en">Predefined stamps</label>
+                <label locale="de">Vordefinierte Stempel</label>
+                <label locale="fr">Tampons prédéfinis</label>
+                <label locale="it">Timbri predefiniti</label>
+            </labels>
+            <type ref="StampDone"/>
+            <type ref="StampDecline"/>
+            <!-- <type ref="StampEntry" /> -->
+        </type-set>
+
+        <type-set name="Images">
+            <labels>
+                <label locale="en">Image Annotations</label>
+                <label locale="de">Bildannotationen</label>
+                <label locale="fr">Annotations d'images</label>
+                <label locale="it">Annotazioni di immagini</label>
+            </labels>
+            <type ref="ImageSignature"/>
+            <type ref="JWTImageBordered"/>
+            <type ref="JadiceImageBordered"/>
+        </type-set>
+    </type-set>
+</annotation-profile>
