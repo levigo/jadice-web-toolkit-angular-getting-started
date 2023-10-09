@@ -1,0 +1,52 @@
+// Global vars.
+
+$jadice-blue: #004f9e;
+
+$better-black: #161617;
+
+$transition-global: 400ms cubic-bezier(0.25, 0.8, 0.25, 1);
+
+$top-level-z-index: 999;
+
+// Global mixins.
+
+@mixin demo-unselectable {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+@mixin demo-flex-row($center-horizontal: false, $center-vertical: false) {
+  display: flex;
+  flex-direction: row;
+
+  @if $center-horizontal {
+    justify-content: center;
+  } @else {
+    justify-content: flex-start;
+  }
+
+  @if $center-vertical {
+    align-items: center;
+  } @else {
+    align-items: flex-start;
+  }
+}
+
+@mixin demo-flex-column($center-horizontal: false, $center-vertical: false) {
+  display: flex;
+  flex-direction: column;
+
+  @if $center-horizontal {
+    align-items: center;
+  } @else {
+    align-items: flex-start;
+  }
+
+  @if $center-vertical {
+    justify-content: center;
+  } @else {
+    justify-content: flex-start;
+  }
+}

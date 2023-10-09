@@ -1,0 +1,35 @@
+// TODO: We should use the theming from @angular/material at some point, but it is cumbersome and doesn't always work.
+// This way we have a lot of control instantly.
+
+demo-root {
+  .mat-table,
+  .mat-form-field,
+  .mat-button-toggle,
+  .mat-button,
+  .mat-stroked-button,
+  .mat-raised-button,
+  .mat-hint,
+  .mat-tooltip,
+  .mat-label,
+  .mat-select,
+  .mat-list-item,
+  .mat-paginator,
+  .mat-error,
+  .mat-option,
+  .mat-expansion-panel-header,
+  .mat-expansion-panel-content,
+  .mat-dialog-title,
+  label,
+  input,
+  button {
+    font-family: "Source Sans Pro", sans-serif;
+  }
+
+  .mat-form-field.mat-focused .mat-form-field-ripple {
+    background-color: #004f9e;
+  }
+
+  .mat-input-element {
+    caret-color: #004f9e;
+  }
+}
