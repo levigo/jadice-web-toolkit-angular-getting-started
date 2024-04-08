@@ -1,0 +1,29 @@
+@import "@levigo/jadice-web-icons/assets/icon-font.scss";
+
+@font-face {
+    font-family: "Jadice Icons";
+    font-style: normal;
+    font-weight: 400;
+    src: url(./icons.woff2) format('woff2');
+    font-display: block; // Use FOIT text rendering strategy. While usually undesirable, it makes more sense than FOUT for icons.
+}
+
+.jadice-icon-font {
+    $size: 28px;
+    font-family: "Jadice Icons";
+    font-weight: normal;
+    font-style: normal;
+    font-size: $size;
+    height: $size !important;
+    width: $size !important;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    pointer-events: none;
+    -webkit-font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
+}

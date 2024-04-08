@@ -51,8 +51,7 @@
             ],
             "styles": [
               "src/styles.scss",
-              "./node_modules/@levigo/jadice-web-icons/assets/icon-font.scss",
-              "./node_modules/@levigo/webtoolkit-ng-client/assets/dark-theme.scss"
+                "src/assets/icons/icon-font.scss"
             ],
             "scripts": []
           },
