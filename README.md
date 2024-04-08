@@ -21,10 +21,7 @@ and that has many features like thumbnails, printing and annotations.
 
 ### the current commit: ###
 added functionality
-* annotations
-* thumbnail view
-* enhanced open file dialogue
-* simple reading mode
+* possibility to style the viewer, see [styling guide](https://webtoolkit.jadice.com/doc/docs/ng-client/styling)
 
 ### previous commits: ###
 please check the README.md of that specific commit
