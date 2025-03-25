@@ -29,6 +29,11 @@
     </dependency>
 
     <dependency>
+      <groupId>com.levigo.jadice.documentplatform.core</groupId>
+      <artifactId>jadice-format-xrechnung</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>com.levigo.jadice.webtoolkit</groupId>
       <artifactId>webtoolkit-export</artifactId>
       <version>${jwv.version}</version>
