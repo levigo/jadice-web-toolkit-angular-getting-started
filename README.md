@@ -21,13 +21,13 @@ and that has many features like thumbnails, printing and annotations.
 
 ### the current commit: ###
 added functionality
-* possibility to style the viewer, see [styling guide](https://webtoolkit.jadice.com/doc/docs/ng-client/styling)
+* added the dependency to be able to view the x-rechnung format.
 
 ### previous commits: ###
 please check the README.md of that specific commit
 
 
 ## how to run this commit ##
-The client should be set up like described in the previous commit.
+The client should be set up like described in the commit "install all necessary dependencies for the client".
 For the server, run org.jadice.jwv.tutorial.JadiceWebViewerApplication001 as spring boot application with the classpath set to the subfolder tutorial-001/server of this project. 
 After that, you need to navigate to localhost:4200 as final step.
