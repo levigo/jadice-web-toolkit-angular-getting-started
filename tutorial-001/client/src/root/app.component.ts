@@ -27,6 +27,7 @@ import {PILLBOX_CONFIG} from "./config/pillbox-config";
 import {SWITCH_MODE_ACTION} from "./config/switch-mode-action";
 import {I18N} from "@levigo/jadice-i18n-support";
 import {JadiceIcon} from "@levigo/jadice-web-icons";
+import {TRANSLATE_ACTION_GROUP} from "@levigo/webtoolkit-ng-client/dist/defaults/actions/action-templates";
 
 // @ts-ignore
 @Component({
@@ -79,6 +80,23 @@ export class AppComponent implements OnInit{
         i18n.init();
         this.setupAnnotations();
         // configures the toolbar, esp. for a correct file opening and a correct switch between normal / accessible mode
+
+        const exportActions = [];
+        // Configure various export options
+        exportActions.push(DefaultActions.EXPORT_PDF);
+        exportActions.push(DefaultActions.EXPORT_REDACTED_PDF);
+        exportActions.push(DefaultActions.EXPORT_PDF_A);
+        exportActions.push(DefaultActions.EXPORT_TIFF);
+        exportActions.push(DefaultActions.PRINT);
+
+        const actionGroup = {
+            icon: JadiceIcon.EXPORT_PDF,
+            label: TRANSLATE_ACTION_GROUP("export"),
+            actions: exportActions
+        };
+
+        let exportAction = ToolbarUtils.makeSelection(actionGroup);
+
         this.TOOLBAR_CONFIG =
             {
             ...DefaultToolbar.CONFIG,
@@ -136,6 +154,10 @@ export class AppComponent implements OnInit{
                     ]
                 }
             },
+            actions: [
+                ...((DefaultToolbar.CONFIG.actions as any).slice(0, -1)),
+                exportAction
+            ],
             auxiliaryActions: [
                 ...(DefaultToolbar.CONFIG.auxiliaryActions as any),
                 ToolbarUtils.makeButton(SWITCH_MODE_ACTION(this.mode$))
