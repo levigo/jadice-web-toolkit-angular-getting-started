@@ -6,7 +6,7 @@
  * file 'LICENSE.txt', which is part of this source code package.
  * </pre>
  */
-package org.jadice.jwv.tutorial;
+package org.jadice.jwv.tutorial.annotation;
 
 import java.io.IOException;
 import java.io.InputStream;

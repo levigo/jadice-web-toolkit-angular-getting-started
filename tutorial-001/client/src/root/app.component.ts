@@ -1,15 +1,12 @@
 import {Component, OnInit, ViewChild} from "@angular/core";
 import {
-    AnnotationCustomizers,
-    AnnotationInstanceType,
     AnnotationProfile,
-    AnnotationProfileCache,
-    AnnotationProfileUtils, DefaultActions,
+    DefaultActions,
     DefaultToolbar,
     DocumentAnnotations,
     DocumentSource,
     GWTDocumentWrapper,
-    GWTImageAnnotationWrapper,
+    ServerConnection,
     Viewer,
     ViewerType
 } from "@levigo/webtoolkit-ng-client";
@@ -20,7 +17,7 @@ import {
     ThumbnailPanelComponent,
     UploadDialogsWrapperComponent
 } from "@levigo/ngx-webtoolkit";
-import {BehaviorSubject, map, tap} from "rxjs";
+import {BehaviorSubject, filter, interval, map, of, startWith, switchMap, take, tap} from "rxjs";
 import {MenuItemType, ToolbarConfig, ToolbarUtils} from "@levigo/jadice-common-components";
 import {Nullable} from "@levigo/utility-types";
 import {I18NService} from "@levigo/ngx-translate-support";
@@ -29,6 +26,7 @@ import {DEMO_DOCUMENTS} from "./config/demo-documents";
 import {PILLBOX_CONFIG} from "./config/pillbox-config";
 import {SWITCH_MODE_ACTION} from "./config/switch-mode-action";
 import {I18N} from "@levigo/jadice-i18n-support";
+import {JadiceIcon} from "@levigo/jadice-web-icons";
 
 // @ts-ignore
 @Component({
@@ -39,6 +37,7 @@ import {I18N} from "@levigo/jadice-i18n-support";
 })
 export class AppComponent implements OnInit{
     readonly DEFAULT_PROFILE = "JWT-Demo-Profile";
+    private static SAVE_ANNOS_MSG_NAME: string = "SAVE_ANNOS";
 
     // The following variables' values are those classes that are defined in the subfolder "config"
     readonly DEMO_DOCUMENTS = DEMO_DOCUMENTS;
@@ -65,7 +64,11 @@ export class AppComponent implements OnInit{
 
     passwordRequiredSource: DocumentSource | null = null;
 
-    source: Nullable<DocumentSource> = null;
+    source: Nullable<DocumentSource|any> = {
+        uris: ["http://localhost:3000/PDFUA.pdf"],
+        annotationUrisList: [["http://localhost:3000/test101.xml"]],
+        password: null
+    };
 
     displayOpenFile: boolean = true;
 
@@ -90,6 +93,43 @@ export class AppComponent implements OnInit{
                                 handle: () => {
                                     this.displayOpenFile = true;
                                 }
+                            }
+                        },
+                        {
+                            type: MenuItemType.ACTION,
+                            action: {
+                                icon: JadiceIcon.DEFAULT_SAVE_ANNO_A,
+                                label: {
+                                    translate: false,
+                                    content: "speichern"
+                                },
+                                /**
+                                 * Determines if the save button should be enabled
+                                 * @returns {Observable<boolean>} Observable that emits true if a document is loaded
+                                 */
+                                isEnabled$: () => {
+                                    // Use interval to periodically check if viewer is available
+                                    return interval(150).pipe(
+                                        startWith(0), // Emit immediately on subscription
+                                        map(() => this.viewerComponent?.getViewer()), // Get the viewer
+                                        filter(viewer => !!viewer), // Only continue if the viewer exists
+                                        take(1), // Take the first occurrence when viewer becomes available, then complete
+                                        switchMap(viewer => {
+                                            if (viewer) {
+                                                // Check if a document is loaded
+                                                return viewer.document$().pipe(
+                                                    map((doc: Nullable<GWTDocumentWrapper>) => {
+                                                        return doc !== null;
+                                                    })
+                                                );
+                                            } else {
+                                                return of(false);
+                                            }
+                                        })
+                                    );
+                                },
+                                // Handler for save action
+                                handle: () => this.saveAnnotations()
                             }
                         },
                         ...DefaultToolbar.CONFIG.menu.menuConfiguration.menuItems.slice(1)
@@ -128,8 +168,6 @@ export class AppComponent implements OnInit{
         });
     }
 
-
-
     private setupAnnotations() {
         AnnotationHelper.setupAnnotations(this.annotationProfile$, this.annotations$, this.DEFAULT_PROFILE);
     }
@@ -165,5 +203,44 @@ export class AppComponent implements OnInit{
     pickTemplateDoc(template: OpenFileTemplate) {
         this.displayOpenFile = false;
         this.source = {uri: template.data, password: null};
+    }
+
+    /**
+     * Saves the current document annotations to the server.
+     *
+     * This method retrieves the current viewer instance, extracts document data as a DTO,
+     * and initiates a server conversation to save the annotations. It shows an alert
+     * when annotations are successfully saved and automatically cleans up the subscription
+     * after 3 seconds to prevent memory leaks.
+     *
+     * @remarks
+     * The server conversation uses the following parameters:
+     * - doc: The document DTO containing all annotation data
+     * - saveStreamId: Identifier for the saved file ("test101.xml")
+     * - saveAnnotationsHandlerId: The server-side handler ID ("SaveJadiceAnnotationsHandler")
+     * - annoFormat: The format for saving annotations ("JADICE")
+     *
+     * The subscription is automatically unsubscribed after 3 seconds to prevent
+     * long-running subscriptions that could cause memory leaks. Could be improved
+     * by using a more sophisticated approach.
+     */
+    private saveAnnotations() {
+        this.viewerComponent.getViewer$().pipe().forEach((v: any) => {
+            let dto = v?.getDocument()?.toSnapshot().toDTO();
+            const subscription = ServerConnection.get().initConversation(
+                AppComponent.SAVE_ANNOS_MSG_NAME,
+                {
+                    doc: dto,
+                    saveStreamId: "test101.xml",
+                    saveAnnotationsHandlerId: "SaveJadiceAnnotationsHandler",
+                    annoFormat: "JADICE"
+                }
+            ).pipe(tap(() => {
+                window.alert("Annotations saved");
+            })).subscribe();
+            setTimeout(() => {
+                subscription.unsubscribe();
+            }, 3000);
+        });
     }
 }

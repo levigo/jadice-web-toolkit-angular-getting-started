@@ -1,0 +1,23 @@
+{
+  "name": "static-server-with-auth",
+  "version": "1.0.0",
+  "description": "A simple static file server with basic authentication",
+  "main": "static-server.js",
+  "scripts": {
+    "start": "node static-server.js"
+  },
+  "keywords": [
+    "static",
+    "server",
+    "http",
+    "auth",
+    "basic-auth"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "formidable": "^3.5.4",
+    "mime-types": "^3.0.1",
+    "minimist": "^1.2.8"
+  }
+}
