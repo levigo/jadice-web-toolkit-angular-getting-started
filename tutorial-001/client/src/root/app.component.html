@@ -10,7 +10,7 @@
                            (sourceChanged)="source = $event"
                            (viewerTypeChangeRequested)="mode$.next($event === 'ACCESSIBLE')"
                            (passwordRequired)="passwordRequiredSource = $event"
-                           [mode]="(vieweType$ | async)"
+                           [mode]="(viewerType$ | async)"
                            [source]="source">
         <overlay-bottom-right>
             <jadice-common-button *ngIf="!(mode$ | async)" [provider]="viewerComponent" [config]="FLOATING_BUTTON_CONFIG"></jadice-common-button>
