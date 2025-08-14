@@ -22,8 +22,8 @@ import {
   ThumbnailPanelComponent,
   UploadDialogsWrapperComponent
 } from "@levigo/ngx-webtoolkit";
-import {BehaviorSubject, filter, interval, map, Observable, of, startWith, switchMap, take, tap} from "rxjs";
-import {Action, MenuItemType, ToolbarConfig, ToolbarUtils} from "@levigo/jadice-common-components";
+import {BehaviorSubject, filter, fromEvent, interval, map, merge, Observable, of, startWith, switchMap, take, tap} from "rxjs";
+import {Action, ButtonConfig, ButtonType, MenuItemType, ToolbarConfig, ToolbarUtils} from "@levigo/jadice-common-components";
 import {NObservable, Nullable} from "@levigo/utility-types";
 import {I18NService} from "@levigo/ngx-translate-support";
 import {FLOATING_BUTTON_CONFIG} from "./config/floating-button-config";
@@ -67,9 +67,22 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild("uploadDialogsWrapper")
   uploadDialogsWrapper!: UploadDialogsWrapperComponent;
 
-  currentDocument: GWTDocumentWrapper | null = null;
-
   passwordRequiredSource: DocumentSource | null = null;
+
+  readonly showThumbnails$ = new BehaviorSubject<boolean>(true);
+  defaultSidebarAction: string = "anno";
+  readonly sideBar$ = new BehaviorSubject<Nullable<string>>(this.defaultSidebarAction);
+
+  readonly TOGGLE_THUMBNAILS_ACTION: Action<Viewer> = DefaultActions.Factories.makeToggleAction(
+    this.showThumbnails$, JadiceIcon.PAGE_VIEW_LEFT,
+    {content: "actions.toggleThumbnails", translate: true}
+  );
+
+  readonly TOGGLE_THUMBNAILS_BUTTON: ButtonConfig<Viewer> = {
+    type: ButtonType.SINGLE_ACTION,
+    action: this.TOGGLE_THUMBNAILS_ACTION
+  };
+
 
   source: Nullable<DocumentSource | any> = {
     uris: ["http://localhost:3000/PDFUA.pdf"],
@@ -230,6 +243,11 @@ export class AppComponent implements OnInit, AfterViewInit {
         }
       });
     });
+    fromEvent(window, "resize").subscribe(() => {
+      this.updateResponsiveBehaviors();
+    });
+    this.updateResponsiveBehaviors();
+    merge(this.showThumbnails$, this.sideBar$).subscribe(() => this.viewerComponent?.recalculateSize());
   }
 
   private setupAnnotations() {
@@ -306,5 +324,15 @@ export class AppComponent implements OnInit, AfterViewInit {
         subscription.unsubscribe();
       }, 3000);
     });
+  }
+
+  private updateResponsiveBehaviors() {
+    this.showThumbnails$.next(this.hasEnoughSpaceForThumbnailView(4));
+    if (!this.hasEnoughSpaceForThumbnailView(3.5))
+      this.sideBar$.next(null)
+  }
+
+  private hasEnoughSpaceForThumbnailView(value: number): boolean {
+    return window.innerWidth > value * 250;
   }
 }

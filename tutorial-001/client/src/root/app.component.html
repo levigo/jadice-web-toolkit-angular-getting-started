@@ -1,9 +1,9 @@
 <jadice-common-toolbar [provider]="viewerComponent" [config]="TOOLBAR_CONFIG"></jadice-common-toolbar>
 <div class="main-row">
-    <div class="sidebar">
-        <jwt-thumbnail-panel #thumbnailPanelComponent
+    <div class="sidebar" [style.display]="(showThumbnails$ | async) ? null : 'none'">
+      <jwt-thumbnail-panel #thumbnailPanelComponent
                              [viewerProvider]="viewerComponent"
-                             [document]="currentDocument"
+                             (closeRequested)="showThumbnails$.next(false)"
                              (pageClicked)="pageSelected($event)"></jwt-thumbnail-panel>
     </div>
     <jwt-multi-mode-viewer #viewerComponent
@@ -12,9 +12,11 @@
                            (passwordRequired)="passwordRequiredSource = $event"
                            [mode]="(viewerType$ | async)"
                            [source]="source">
-        <overlay-bottom-right>
-            <jadice-common-button *ngIf="!(mode$ | async)" [provider]="viewerComponent" [config]="FLOATING_BUTTON_CONFIG"></jadice-common-button>
-        </overlay-bottom-right>
+      <overlay-bottom-left>
+      <jadice-common-button [provider]="viewerComponent"
+                            [style.margin-left.px]="(showThumbnails$ | async) ? -24 : 0"
+                            [config]="TOGGLE_THUMBNAILS_BUTTON"></jadice-common-button>
+      </overlay-bottom-left>
         <overlay-bottom>
             <jadice-common-pillbox [provider]="viewerComponent" [config]="PILLBOX_CONFIG"></jadice-common-pillbox>
         </overlay-bottom>
