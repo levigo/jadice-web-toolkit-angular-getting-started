@@ -1,32 +1,44 @@
 <jadice-common-toolbar [provider]="viewerComponent" [config]="TOOLBAR_CONFIG"></jadice-common-toolbar>
 <div class="main-row">
-    <div class="sidebar" [style.display]="(showThumbnails$ | async) ? null : 'none'">
-      <jwt-thumbnail-panel #thumbnailPanelComponent
-                             [viewerProvider]="viewerComponent"
-                             (closeRequested)="showThumbnails$.next(false)"
-                             (pageClicked)="pageSelected($event)"></jwt-thumbnail-panel>
-    </div>
-    <jwt-multi-mode-viewer #viewerComponent
-                           (sourceChanged)="source = $event"
-                           (viewerTypeChangeRequested)="mode$.next($event === 'ACCESSIBLE')"
-                           (passwordRequired)="passwordRequiredSource = $event"
-                           [mode]="(viewerType$ | async)"
-                           [source]="source">
-      <overlay-bottom-left>
+  <div class="sidebar" [style.display]="(showThumbnails$ | async) ? null : 'none'">
+    <jwt-thumbnail-panel #thumbnailPanelComponent
+                         [viewerProvider]="viewerComponent"
+                         (closeRequested)="showThumbnails$.next(false)"
+                         (pageClicked)="pageSelected($event)"></jwt-thumbnail-panel>
+  </div>
+  <jwt-multi-mode-viewer #viewerComponent
+                         (sourceChanged)="source = $event"
+                         (viewerTypeChangeRequested)="mode$.next($event)"
+                         (passwordRequired)="passwordRequiredSource = $event"
+                         [mode]="mode$ | async"
+                         [source]="source">
+    <overlay-bottom-left>
       <jadice-common-button [provider]="viewerComponent"
                             [style.margin-left.px]="(showThumbnails$ | async) ? -24 : 0"
                             [config]="TOGGLE_THUMBNAILS_BUTTON"></jadice-common-button>
-      </overlay-bottom-left>
-        <overlay-bottom>
-            <jadice-common-pillbox [provider]="viewerComponent" [config]="PILLBOX_CONFIG"></jadice-common-pillbox>
-        </overlay-bottom>
-    </jwt-multi-mode-viewer>
-    <div class="right-sidebar">
-        <jwt-annotation-panel [viewerProvider]="viewerComponent"
-                              (annotationSelected)="pageSelected($event)"
-                              [annotationProfile]="annotationProfile$ | async">
-        </jwt-annotation-panel>
+    </overlay-bottom-left>
+    <overlay-bottom>
+      <jadice-common-pillbox [provider]="viewerComponent" [config]="PILLBOX_CONFIG"></jadice-common-pillbox>
+    </overlay-bottom>
+    <overlay-bottom-right>
+      <jadice-common-button *ngIf="(mode$ | async) === 'RENDERED_GWT'" [provider]="viewerComponent"
+                            [config]="FLOATING_BUTTON_CONFIG"></jadice-common-button>
+    </overlay-bottom-right>
+
+  </jwt-multi-mode-viewer>
+  <div class="right-sidebar" *ngIf="!!rightToolbarConfig.actions" [ngSwitch]="sideBar$ | async">
+    <div *ngSwitchCase="'anno'">
+      <jwt-annotation-panel [viewerProvider]="viewerComponent"
+                            (annotationSelected)="pageSelected($event)"
+                            [annotationProfile]="annotationProfile$ | async"
+                            (closeRequested)="sideBar$.next('')">
+        role="region"
+        aria-label="Tree component area"
+        aria-braillelabel="Tree component area">
+      </jwt-annotation-panel>
     </div>
+    <jadice-common-toolbar role="complementary" [config]="rightToolbarConfig" [provider]="viewerComponent"></jadice-common-toolbar>
+  </div>
 </div>
 <jwt-password-dialog *ngIf="passwordRequiredSource"
                      (confirm)="loadDocWithPassword($event)"

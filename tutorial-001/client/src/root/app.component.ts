@@ -23,13 +23,21 @@ import {
   UploadDialogsWrapperComponent
 } from "@levigo/ngx-webtoolkit";
 import {BehaviorSubject, filter, fromEvent, interval, map, merge, Observable, of, startWith, switchMap, take, tap} from "rxjs";
-import {Action, ButtonConfig, ButtonType, MenuItemType, ToolbarConfig, ToolbarUtils} from "@levigo/jadice-common-components";
+import {
+  Action,
+  Alignment,
+  ButtonConfig,
+  ButtonType,
+  MenuItemType,
+  ToolbarAction,
+  ToolbarConfig,
+  ToolbarUtils
+} from "@levigo/jadice-common-components";
 import {NObservable, Nullable} from "@levigo/utility-types";
 import {I18NService} from "@levigo/ngx-translate-support";
 import {FLOATING_BUTTON_CONFIG} from "./config/floating-button-config";
 import {DEMO_DOCUMENTS} from "./config/demo-documents";
 import {PILLBOX_CONFIG} from "./config/pillbox-config";
-import {SWITCH_MODE_ACTION} from "./config/switch-mode-action";
 import {I18N} from "@levigo/jadice-i18n-support";
 import {JadiceIcon} from "@levigo/jadice-web-icons";
 import {TRANSLATE_ACTION, TRANSLATE_ACTION_GROUP} from "@levigo/webtoolkit-ng-client/dist/defaults/actions/action-templates";
@@ -51,8 +59,31 @@ export class AppComponent implements OnInit, AfterViewInit {
   readonly PILLBOX_CONFIG = PILLBOX_CONFIG;
 
   // viewer mode - default mode or accessible mode for people with visual impairment?
-  mode$ = new BehaviorSubject<boolean>(false);
+  mode$ = new BehaviorSubject<ViewerType>(ViewerType.RENDERED_GWT);
   viewerType$ = this.mode$.pipe(map(mode => (mode ? ViewerType.ACCESSIBLE : ViewerType.RENDERED_GWT)));
+  defaultSidebarAction: string = "anno";
+  readonly sideBar$ = new BehaviorSubject<Nullable<string>>(this.defaultSidebarAction);
+
+
+  readonly TOGGLE_ANNO_PANEL_ACTION = DefaultActions.Factories.makeEnumAction(
+    this.sideBar$, JadiceIcon.ANNO_FALLBACK_ICON, {
+      translate: true, content: "jadiceWebViewerDist.sidebar.anno"
+    }, "anno");
+  readonly DEFAULT_RIGHT_TOOLBAR_CONFIG: ToolbarConfig<Viewer> = {
+    alignment: Alignment.VERTICAL,
+    actions: [
+      ToolbarUtils.makeButton(this.TOGGLE_ANNO_PANEL_ACTION),
+    ],
+    auxiliaryActions: [],
+    menu: {
+      display: false,
+      menuConfiguration: {
+        menuItems: []
+      }
+    }
+  };
+
+
 
   // use the default config until we have the anno profile data.
   // Then in ngAfterViewInit, replace the default config so we can add our custom redacted pdf export.
@@ -70,8 +101,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   passwordRequiredSource: DocumentSource | null = null;
 
   readonly showThumbnails$ = new BehaviorSubject<boolean>(true);
-  defaultSidebarAction: string = "anno";
-  readonly sideBar$ = new BehaviorSubject<Nullable<string>>(this.defaultSidebarAction);
+
+
+  rightToolbarConfig: ToolbarConfig<Viewer> = this.DEFAULT_RIGHT_TOOLBAR_CONFIG;
 
   readonly TOGGLE_THUMBNAILS_ACTION: Action<Viewer> = DefaultActions.Factories.makeToggleAction(
     this.showThumbnails$, JadiceIcon.PAGE_VIEW_LEFT,
@@ -82,6 +114,14 @@ export class AppComponent implements OnInit, AfterViewInit {
     type: ButtonType.SINGLE_ACTION,
     action: this.TOGGLE_THUMBNAILS_ACTION
   };
+
+  readonly SWITCH_MODE_ACTION: Action<Viewer> = {
+    icon: JadiceIcon.DEFAULT_READER_MODE,
+    label: {content: "actions.accessibleMode", translate: true},
+    isActive$: () => this.mode$.pipe(map(mode => mode === ViewerType.ACCESSIBLE)),
+    handle: () => this.toggleMultiModeViewer()
+  };
+
 
 
   source: Nullable<DocumentSource | any> = {
@@ -186,7 +226,7 @@ export class AppComponent implements OnInit, AfterViewInit {
             ],
             auxiliaryActions: [
               ...(DefaultToolbar.CONFIG.auxiliaryActions as any),
-              ToolbarUtils.makeButton(SWITCH_MODE_ACTION(this.mode$))
+              ToolbarUtils.makeButton(this.SWITCH_MODE_ACTION)
             ]
           }
 
@@ -334,5 +374,13 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   private hasEnoughSpaceForThumbnailView(value: number): boolean {
     return window.innerWidth > value * 250;
+  }
+
+  toggleMultiModeViewer() {
+    if (this.mode$.getValue() === ViewerType.RENDERED_GWT) {
+      this.mode$.next(ViewerType.ACCESSIBLE);
+    } else {
+      this.mode$.next(ViewerType.RENDERED_GWT);
+    }
   }
 }
