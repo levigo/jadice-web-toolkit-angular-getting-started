@@ -3,9 +3,10 @@
   "version": "6.64.5",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "build-prod": "ng build --configuration production",
+    "start": "npm run bundle-lang-files && ng serve",
+    "build": "npm run bundle-lang-files && ng build",
+    "bundle-lang-files": "node merge-json.js",
+    "build-prod": "npm run bundle-lang-files && ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -41,6 +42,7 @@
     "@angular/cli": "^19.2.12",
     "@angular/compiler-cli": "^19.2.11",
     "@types/node": "^22.15.30",
-    "typescript": "~5.8.3"
+    "typescript": "~5.8.3",
+    "json-merge-patch": "^1.0.2"
   }
 }
