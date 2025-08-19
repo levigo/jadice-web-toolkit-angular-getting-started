@@ -17,6 +17,7 @@ import {
 } from "@levigo/webtoolkit-ng-client";
 import {
   AnnotationHelper,
+  AttachmentPanelComponent,
   MultiModeViewerComponent,
   OpenFileTemplate,
   ThumbnailPanelComponent,
@@ -28,6 +29,7 @@ import {
   Alignment,
   ButtonConfig,
   ButtonType,
+  Logger,
   MenuItemType,
   ToolbarAction,
   ToolbarConfig,
@@ -50,6 +52,8 @@ import {TRANSLATE_ACTION, TRANSLATE_ACTION_GROUP} from "@levigo/webtoolkit-ng-cl
   standalone: false // for a proper fix, see https://v17.angular.io/guide/standalone-components
 })
 export class AppComponent implements OnInit, AfterViewInit {
+  logger = Logger.get(AppComponent);
+
   readonly DEFAULT_PROFILE = "JWT-Demo-Profile";
   private static SAVE_ANNOS_MSG_NAME: string = "SAVE_ANNOS";
 
@@ -64,15 +68,62 @@ export class AppComponent implements OnInit, AfterViewInit {
   defaultSidebarAction: string = "anno";
   readonly sideBar$ = new BehaviorSubject<Nullable<string>>(this.defaultSidebarAction);
 
+  @ViewChild("attachmentPanel")
+  attachmentPanel!: AttachmentPanelComponent;
 
+  displayAttachment: boolean = false;
+  attachmentId: string = "";
+  attachmentName: string = "";
+
+  // Right toolbar configuration object - controls which sidebar panels are available
+  rightToolbarActionConfig: {
+    annotationPanel: boolean,
+    advancedSearch: boolean,
+    bookmarkPanel: boolean,
+    attachmentPanel: boolean,
+    documentSelectionPanel: boolean
+  } = {
+    annotationPanel: true,
+    advancedSearch: true,
+    bookmarkPanel: true,
+    attachmentPanel: false,
+    documentSelectionPanel: false
+  };
+
+  // All sidebar toggle actions
   readonly TOGGLE_ANNO_PANEL_ACTION = DefaultActions.Factories.makeEnumAction(
     this.sideBar$, JadiceIcon.ANNO_FALLBACK_ICON, {
       translate: true, content: "jadiceWebViewerDist.sidebar.anno"
     }, "anno");
+
+  readonly TOGGLE_ADVANCED_SEARCH_ACTION = DefaultActions.Factories.makeEnumAction(
+    this.sideBar$, JadiceIcon.DEFAULT_TEXTSEARCH, {
+      translate: true, content: "jadiceWebViewerDist.sidebar.search"
+    }, "advancedSearch");
+
+  readonly TOGGLE_BOOKMARK_PANEL_ACTION = DefaultActions.Factories.makeEnumAction(
+    this.sideBar$, JadiceIcon.BOOKMARK, {
+      translate: true, content: "jadiceWebViewerDist.sidebar.bookmarks"
+    }, "bookmarks");
+
+  readonly TOGGLE_ATTACHMENT_ACTION = DefaultActions.Factories.makeEnumAction(
+    this.sideBar$, JadiceIcon.EDITOR_COPY, {
+      translate: true, content: "jadiceWebViewerDist.sidebar.attachments"
+    }, "attachments");
+
+  readonly TOGGLE_DOCS_PANEL_ACTION = DefaultActions.Factories.makeEnumAction(
+    this.sideBar$, JadiceIcon.DEFAULT_DOCUMENT, {
+      translate: true, content: "jadiceWebViewerDist.sidebar.documents"
+    }, "docs");
+
+  // Default right toolbar configuration with all available actions
   readonly DEFAULT_RIGHT_TOOLBAR_CONFIG: ToolbarConfig<Viewer> = {
     alignment: Alignment.VERTICAL,
     actions: [
+      ToolbarUtils.makeButton(this.TOGGLE_ADVANCED_SEARCH_ACTION),
       ToolbarUtils.makeButton(this.TOGGLE_ANNO_PANEL_ACTION),
+      ToolbarUtils.makeButton(this.TOGGLE_BOOKMARK_PANEL_ACTION),
+      ToolbarUtils.makeButton(this.TOGGLE_ATTACHMENT_ACTION)
     ],
     auxiliaryActions: [],
     menu: {
@@ -82,8 +133,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     }
   };
-
-
 
   // use the default config until we have the anno profile data.
   // Then in ngAfterViewInit, replace the default config so we can add our custom redacted pdf export.
@@ -102,7 +151,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   readonly showThumbnails$ = new BehaviorSubject<boolean>(true);
 
-
+  // Initialize with default configuration
   rightToolbarConfig: ToolbarConfig<Viewer> = this.DEFAULT_RIGHT_TOOLBAR_CONFIG;
 
   readonly TOGGLE_THUMBNAILS_ACTION: Action<Viewer> = DefaultActions.Factories.makeToggleAction(
@@ -122,8 +171,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     handle: () => this.toggleMultiModeViewer()
   };
 
-
-
   source: Nullable<DocumentSource | any> = {
     uris: ["http://localhost:3000/PDFUA.pdf"],
     annotationUrisList: [["http://localhost:3000/test101.xml"]],
@@ -135,9 +182,15 @@ export class AppComponent implements OnInit, AfterViewInit {
   annotations$ = new BehaviorSubject<DocumentAnnotations>([]);
   annotationProfile$ = new BehaviorSubject<Nullable<AnnotationProfile>>(null);
 
+  attachmentSource: DocumentSource | any = {
+    uri: "",
+    password: null
+  };
+
   constructor(private i18n: I18NService) {
     i18n.init();
-    // configures the toolbar, esp. for a correct file opening and a correct switch between normal / accessible mode
+    // Initialize the right toolbar with the current configuration
+    this.configureRightToolbar({});
   }
 
   ngAfterViewInit(): void {
@@ -146,7 +199,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         let typesNotToRenderOnExport = profile.types
           .filter(profile => !profile.name.endsWith("Mask"))
           .map(profile => profile.name);
-
 
         const exportActions = [];
         // Configure various export options
@@ -229,10 +281,40 @@ export class AppComponent implements OnInit, AfterViewInit {
               ToolbarUtils.makeButton(this.SWITCH_MODE_ACTION)
             ]
           }
-
       }
     });
     this.setupAnnotations();
+  }
+
+  /**
+   * Dynamically configures the right toolbar based on the provided configuration.
+   * This method allows enabling/disabling individual sidebar panels.
+   *
+   * @param config Configuration object specifying which panels should be enabled
+   */
+  configureRightToolbar(config: {
+    annotationPanel?: boolean,
+    advancedSearch?: boolean,
+    bookmarkPanel?: boolean,
+    attachmentPanel?: boolean,
+    documentSelectionPanel?: boolean
+  }): void {
+    const actions: ToolbarAction<Viewer>[] = [];
+    // Merge the provided config with the current configuration
+    this.rightToolbarActionConfig = {...this.rightToolbarActionConfig, ...config};
+    actions.push(ToolbarUtils.makeButton(this.TOGGLE_ADVANCED_SEARCH_ACTION));
+    actions.push(ToolbarUtils.makeButton(this.TOGGLE_ANNO_PANEL_ACTION));
+    // If annotations are enabled, set it as the default sidebar
+    if (!this.sideBar$.value) {
+      this.sideBar$.next("anno");
+    }
+    actions.push(ToolbarUtils.makeButton(this.TOGGLE_BOOKMARK_PANEL_ACTION));
+    actions.push(ToolbarUtils.makeButton(this.TOGGLE_ATTACHMENT_ACTION));
+    // Update the right toolbar configuration
+    this.rightToolbarConfig = {
+      ...this.DEFAULT_RIGHT_TOOLBAR_CONFIG,
+      actions: actions
+    };
   }
 
   createRedactedButton(skippedTypesOnRendering: string[]) {
@@ -311,7 +393,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.source = source;
   }
 
-
   async openFile(file: File) {
     this.displayOpenFile = false;
 
@@ -382,5 +463,64 @@ export class AppComponent implements OnInit, AfterViewInit {
     } else {
       this.mode$.next(ViewerType.RENDERED_GWT);
     }
+  }
+
+  // Example methods to demonstrate how to use the dynamic configuration
+
+  /**
+   * Enable only annotation and search panels
+   */
+  enableBasicMode() {
+    this.configureRightToolbar({
+      annotationPanel: true,
+      advancedSearch: true,
+      bookmarkPanel: false,
+      attachmentPanel: false,
+      documentSelectionPanel: false
+    });
+  }
+
+  /**
+   * Enable all available panels
+   */
+  enableFullMode() {
+    this.configureRightToolbar({
+      annotationPanel: true,
+      advancedSearch: true,
+      bookmarkPanel: true,
+      attachmentPanel: true,
+      documentSelectionPanel: true
+    });
+  }
+
+  /**
+   * Disable all sidebar panels
+   */
+  enableMinimalMode() {
+    this.configureRightToolbar({
+      annotationPanel: false,
+      advancedSearch: false,
+      bookmarkPanel: false,
+      attachmentPanel: false,
+      documentSelectionPanel: false
+    });
+  }
+
+  async handleAttachmentClick(attachment: any) {
+    this.logger.debug("Received attachment outer", attachment);
+    this.displayAttachment = true;
+    await this.openAttachment(attachment.file.id, attachment.file.name);
+  }
+
+  async openAttachment(attachmentId: string, attachmentName: string) {
+    const sourceAny = this.source as any;
+    const attachmentUri = sourceAny.uri ? sourceAny.uri: sourceAny.uris[0];
+    this.logger.debug("Opening attachmentSource=" + attachmentUri + "?attachment=" + attachmentId);
+    this.attachmentSource = {
+      uri: attachmentUri + "?attachment=" + attachmentId,
+      password: null
+    };
+    this.attachmentId = attachmentId;
+    this.attachmentName = attachmentName;
   }
 }

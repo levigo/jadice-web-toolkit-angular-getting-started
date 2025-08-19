@@ -27,3 +27,7 @@
         flex-shrink: 0;
     }
 }
+
+::ng-deep jadice-common-toolbar .scroll-horizontal {
+  width: 100% !important;
+}

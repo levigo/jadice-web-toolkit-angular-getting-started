@@ -27,6 +27,20 @@
 
   </jwt-multi-mode-viewer>
   <div class="right-sidebar" *ngIf="!!rightToolbarConfig.actions" [ngSwitch]="sideBar$ | async">
+    <jwt-advanced-search-panel *ngSwitchCase="'advancedSearch'"
+                               [viewerProvider]="viewerComponent"
+                               (closeRequested)="sideBar$.next('')"
+                               role="region"
+                               aria-label="Search panel area"
+                               aria-braillelabel="Search panel area">
+    </jwt-advanced-search-panel>
+    <jwt-bookmark-panel *ngSwitchCase="'bookmarks'"
+                        [viewerProvider]="viewerComponent"
+                        (closeRequested)="sideBar$.next('')"
+                        role="region"
+                        aria-label="Bookmark panel area"
+                        aria-braillelabel="Bookmark panel area">
+    </jwt-bookmark-panel>
     <div *ngSwitchCase="'anno'">
       <jwt-annotation-panel [viewerProvider]="viewerComponent"
                             (annotationSelected)="pageSelected($event)"
@@ -37,9 +51,11 @@
         aria-braillelabel="Tree component area">
       </jwt-annotation-panel>
     </div>
+    <jwt-attachment-panel #attachmentPanel *ngSwitchCase="'attachments'" [viewerProvider]="viewerComponent" (closeRequested)="sideBar$.next('')" (attachmentClicked)="handleAttachmentClick($event)"></jwt-attachment-panel>
     <jadice-common-toolbar role="complementary" [config]="rightToolbarConfig" [provider]="viewerComponent"></jadice-common-toolbar>
   </div>
 </div>
+<jwt-view-attachment-modal *ngIf="displayAttachment" [source]="attachmentSource" [attachmentName]="attachmentName" (closeRequested)="displayAttachment = false"></jwt-view-attachment-modal>
 <jwt-password-dialog *ngIf="passwordRequiredSource"
                      (confirm)="loadDocWithPassword($event)"
                      (cancel)="passwordRequiredSource = null; setUrl('')"></jwt-password-dialog>
