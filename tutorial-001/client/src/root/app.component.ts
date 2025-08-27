@@ -62,6 +62,36 @@ export class AppComponent implements OnInit, AfterViewInit {
   readonly FLOATING_BUTTON_CONFIG = FLOATING_BUTTON_CONFIG;
   readonly PILLBOX_CONFIG = PILLBOX_CONFIG;
 
+  saveAnnosAction: (() => void) = this.saveAnnotations.bind(this);
+
+  readonly SAVE_ANNOS_ACTION: Action<Viewer> = {
+    icon: JadiceIcon.DEFAULT_SAVE_ANNO_B,
+    label: {content: "actions.saveAnnotations", translate: true},
+    isActive$: () => this.mode$.pipe(map(mode => mode === ViewerType.ACCESSIBLE)),
+    isEnabled$: (): Observable<boolean> => {
+      // Use interval to periodically check if viewer is available
+      return interval(150).pipe(
+        startWith(0), // Emit immediately on subscription
+        map(() => this.viewerComponent?.getViewer()), // Get the viewer
+        filter(viewer => !!viewer), // Only continue if the viewer exists
+        take(1), // Take the first occurrence when viewer becomes available, then complete
+        switchMap(viewer => {
+          if (viewer) {
+            // Check if a document is loaded
+            return viewer.document$().pipe(
+              map((doc: Nullable<GWTDocumentWrapper>) => {
+                return doc !== null;
+              })
+            );
+          } else {
+            return of(false);
+          }
+        })
+      );
+    },
+    handle: () => this.saveAnnosAction()
+  };
+
   // viewer mode - default mode or accessible mode for people with visual impairment?
   mode$ = new BehaviorSubject<ViewerType>(ViewerType.RENDERED_GWT);
   viewerType$ = this.mode$.pipe(map(mode => (mode ? ViewerType.ACCESSIBLE : ViewerType.RENDERED_GWT)));
@@ -231,50 +261,15 @@ export class AppComponent implements OnInit, AfterViewInit {
                       }
                     }
                   },
-                  {
-                    type: MenuItemType.ACTION,
-                    action: {
-                      icon: JadiceIcon.DEFAULT_SAVE_ANNO_A,
-                      label: {
-                        translate: false,
-                        content: "speichern"
-                      },
-                      /**
-                       * Determines if the save button should be enabled
-                       * @returns {Observable<boolean>} Observable that emits true if a document is loaded
-                       */
-                      isEnabled$: (): Observable<boolean> => {
-                        // Use interval to periodically check if viewer is available
-                        return interval(150).pipe(
-                          startWith(0), // Emit immediately on subscription
-                          map(() => this.viewerComponent?.getViewer()), // Get the viewer
-                          filter(viewer => !!viewer), // Only continue if the viewer exists
-                          take(1), // Take the first occurrence when viewer becomes available, then complete
-                          switchMap(viewer => {
-                            if (viewer) {
-                              // Check if a document is loaded
-                              return viewer.document$().pipe(
-                                map((doc: Nullable<GWTDocumentWrapper>) => {
-                                  return doc !== null;
-                                })
-                              );
-                            } else {
-                              return of(false);
-                            }
-                          })
-                        );
-                      },
-                      // Handler for save action
-                      handle: () => this.saveAnnotations()
-                    }
-                  },
                   ...DefaultToolbar.CONFIG.menu.menuConfiguration.menuItems.slice(1)
                 ]
               }
             },
             actions: [
               ...((DefaultToolbar.CONFIG.actions as any).slice(0, -1)),
-              exportAction
+              exportAction,
+              ToolbarUtils.SEPARATOR,
+              ToolbarUtils.makeButton(this.SAVE_ANNOS_ACTION)
             ],
             auxiliaryActions: [
               ...(DefaultToolbar.CONFIG.auxiliaryActions as any),

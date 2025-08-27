@@ -46,6 +46,7 @@
     "actions": {
         "openFile": "Open new document",
         "accessibleMode": "Simple reading mode",
-        "toggleThumbnails": "Toggle thumbnails"
+        "toggleThumbnails": "Toggle thumbnails",
+        "saveAnnotations":  "Enregistrer les annotations"
     }
 }

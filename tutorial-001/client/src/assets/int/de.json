@@ -46,6 +46,7 @@
     "actions": {
         "openFile": "Neues Dokument öffnen",
         "accessibleMode": "Einfacher Lesemodus",
-        "toggleThumbnails": "Vorschau ein-/ausblenden"
+        "toggleThumbnails": "Vorschau ein-/ausblenden",
+        "saveAnnotations":  "Annotationen speichern"
     }
 }
