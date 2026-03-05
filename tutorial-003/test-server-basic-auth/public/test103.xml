@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<annotations xmlns="http://xml.levigo.com/ns/jadice/annotations/1.0">
+    <page index="0" profile="JWT-Demo-Profile"/>
+</annotations>

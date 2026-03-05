@@ -1,0 +1,129 @@
+@import "@levigo/jadice-common-components/assets/dark-theme";
+
+$background-level-0: #000000;
+$background-level-1: #30363F;
+$background-level-1-half-opacity: rgba(48, 54, 63, 0.85);
+$background-level-2: #434952;
+$background-level-3: #5C6168;
+$background-level-4: #131619;
+
+$gradient-background-level-1: #3B3E43;
+$gradient-background-level-2: #2F333B;
+
+$foreground-level-0: #FFFFFF;
+$foreground-level-1: #DEDFE0;
+$foreground-level-2: #ADBBCD;
+$foreground-level-2-half-opacity: rgba(171, 186, 204, 0.5);
+$foreground-level-3: #8D9095;
+$foreground-level-4: #595F67;
+
+$accent-level-0: #70a0ff;
+$accent-level-1: #367aff;
+$accent-level-1-half-opacity: rgba(54, 121, 255, 0.5);
+$accent-level-2: #2D65CE;
+
+$warn-level-0: #ffb870;
+$warn-level-1: #ff9a36;
+
+@include JADICE_RIGID_THEME((
+
+    annotation-panel: (
+        background : $background-level-0,
+        foreground: $foreground-level-0,
+        entry-background-hover: $background-level-3,
+        entry-background-selected: $accent-level-1,
+        selection-delete-button-background: $accent-level-1,
+        selection-delete-button-background-hover: $accent-level-0,
+        selection-delete-button-foreground: $foreground-level-0,
+        separator: $foreground-level-2-half-opacity,
+        scrollbar: $foreground-level-1,
+    ),
+    search-bar: (
+        background: $background-level-0,
+        foreground: $foreground-level-0
+    ),
+    advanced-search-panel: (
+        background: $background-level-2,
+        foreground: $foreground-level-0,
+        search-bar-background: $foreground-level-4,
+        result-hover-background: $foreground-level-4,
+        result-active-background: $accent-level-1,
+        separator: $foreground-level-4,
+        progress-bar: $foreground-level-0,
+        checkbox: $foreground-level-4,
+        checkbox-active: $accent-level-1,
+        checkbox-hover: $background-level-0,
+        checkbox-hover-outline: $accent-level-1
+    ),
+    bookmark-panel: (
+        background: $background-level-2,
+        foreground: $foreground-level-0,
+        result-hover-background: $foreground-level-4,
+        result-active-background: $accent-level-1,
+        separator: $foreground-level-4
+    ),
+    search-panel: (
+        background: $background-level-0,
+        foreground: $foreground-level-0
+    ),
+    line-width-editor: (
+        background: $background-level-1,
+        background-hover: $background-level-2,
+        foreground: $foreground-level-0
+    ),
+    thumbnail-panel: (
+        background: $background-level-2,
+        foreground: $foreground-level-0,
+        slider-thumb: $foreground-level-0,
+        slider-track-background: $foreground-level-2,
+        slider-track-fill: $foreground-level-1
+    ),
+    thumbnail-view: (
+        highlight: $accent-level-1,
+        outline: $accent-level-1-half-opacity,
+        label: $foreground-level-0,
+        active-label: $foreground-level-0
+    ),
+    open-file-modal: (
+        dnd-border: $foreground-level-0,
+        dnd-hint: $background-level-0,
+        overlay: $background-level-0,
+        scrollbar-thumb: $foreground-level-0,
+        scrollbar-firefox-rail: $background-level-1,
+        button-background: $accent-level-1,
+        button-background-hover: $accent-level-0,
+        foreground: $foreground-level-0,
+        background: linear-gradient(to bottom, $gradient-background-level-1, $gradient-background-level-2)
+    ),
+    accessible-viewer: (
+        background: linear-gradient(to bottom, $background-level-3, $background-level-2)
+    )
+));
+
+@include DEFAULT_GWT_OVERRIDES(
+    $viewer-background: linear-gradient(to bottom, $background-level-3, $background-level-2),
+    $scrollbar-knob: $foreground-level-1,
+    $scrollbar-knob-active: $foreground-level-0
+);
+
+html, body {
+  .jadice-viewer-confirm-dialog-gwt {
+    background: $background-level-2;
+    color: white;
+    border-radius: 5px;
+  }
+
+  .jadice-viewer-confirm-dialog-header-gwt {
+    background: transparent;
+    border-color: $background-level-3;
+    font-weight: 400;
+  }
+
+  .jadice-viewer-confirm-dialog-content-gwt {
+    background: transparent;
+  }
+
+  .jadice-viewer-confirm-dialog-actions-gwt > button {
+    background-color: $accent-level-1;
+  }
+}

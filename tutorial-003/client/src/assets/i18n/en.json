@@ -1,0 +1,42 @@
+{
+    "documents": {
+        "ua": {
+            "title": "PDF/UA example",
+            "description": "Example for an accessible document that is highly compatible with our simple reading mode."
+        },
+        "factsheet": {
+            "title": "Factsheet jadice web toolkit",
+            "description": "Example of a complex PDF document. Try using text functions like selection, copy and search."
+        },
+        "passwordProtected": {
+            "title": "Encrypted PDF",
+            "description": "This document is an example for encrypted PDFs. The password for this document is \"levigo\"."
+        },
+        "verwandlung": {
+            "title": "The Metamorphosis",
+            "description": "Document imported via URL."
+        },
+        "romeo": {
+            "title": "Romeo and Juliet",
+            "description": "Document imported via URL."
+        },
+        "baxterbay": {
+            "title": "Baxter Bay Bank",
+            "description": "Example of a MO:DCA (AFP) file."
+        },
+        "xrechnung": {
+            "title": "XRechnung",
+            "description": "Example of a XRechnung XML file."
+        }
+    },
+    "templateCategories": {
+        "demoDocuments": "Demo documents",
+        "digiBib": "DigiBib.org samples",
+        "miscFormats": "Specific format examples"
+    },
+    "actions": {
+        "openFile": "Open new document",
+        "accessibleMode": "Simple reading mode",
+        "toggleThumbnails": "Toggle thumbnails"
+    }
+}

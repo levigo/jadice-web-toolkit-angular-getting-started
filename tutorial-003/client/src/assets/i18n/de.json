@@ -1,0 +1,42 @@
+{
+    "documents": {
+        "ua": {
+            "title": "PDF/UA Beispieldokument",
+            "description": "Beispiel für ein barrierefreies Dokument für die Nutzung mit dem Lesemodus."
+        },
+        "factsheet": {
+            "title": "Factsheet jadice web toolkit",
+            "description": "Beispiel für ein komplexeres PDF-Dokument. Probieren Sie die Textfunktionen wie Markieren und Kopieren sowie die Textsuche aus."
+        },
+        "passwordProtected": {
+            "title": "Verschlüsseltes PDF",
+            "description": "Dieses Dokument ist ein Beispiel für die Anzeige von verschlüsselten PDFs. Das Passwort für dieses Dokument ist \"levigo\"."
+        },
+        "verwandlung": {
+            "title": "Die Verwandlung",
+            "description": "Dokument, das über eine externe URL geladen wird."
+        },
+        "romeo": {
+            "title": "Romeo and Julia",
+            "description": "Dokument, das über eine externe URL geladen wird."
+        },
+        "baxterbay": {
+            "title": "Baxter Bay Bank",
+            "description": "Beispiel für eine MO:DCA (AFP)-Datei."
+        },
+        "xrechnung": {
+            "title": "XRechnung",
+            "description": "Beispiel für eine XRechnung-Datei."
+        }
+    },
+    "templateCategories": {
+        "demoDocuments": "Demo-Dokumente",
+        "digiBib": "DigiBib.org Dokumente",
+        "miscFormats": "Spezifische Formatbeispiele"
+    },
+    "actions": {
+        "openFile": "Neues Dokument öffnen",
+        "accessibleMode": "Einfacher Lesemodus",
+        "toggleThumbnails": "Vorschau ein-/ausblenden"
+    }
+}
