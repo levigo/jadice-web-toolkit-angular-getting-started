@@ -1,16 +1,7 @@
 # JwvGettingStarted
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.2.9.
+Steps in this commit:
 
-Commands used for this initial commit:
-
-```ng jwv-getting-started```
-
-the following options were choosen:
-* angular-routing - yes
-* stylesheet format - scss
-
-trying with ```ng build``` resulted in the error ```Error: error:0308010C:digital envelope routines::unsupported```
-
-This was fixed with ```npm audit fix --force```
-
+* add the auto-generated angular files to the .gitignore
+* manually change the version to the most recent versions according to npmjs.com, as far as possible
+* run ```npm install```
