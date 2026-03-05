@@ -100,30 +100,7 @@ export class AppComponent implements OnInit{
                         },
                         {
                             type: MenuItemType.ACTION,
-                            action: {
-                                icon: JadiceIcon.DEFAULT_SAVE_ANNO_A,
-                                label: {
-                                    translate: false,
-                                    content: "Save annotations"
-                                },
-                                isEnabled$: () => {
-                                    return interval(150).pipe(
-                                        startWith(0),
-                                        map(() => this.viewerComponent?.getViewer()),
-                                        filter(viewer => !!viewer),
-                                        take(1),
-                                        switchMap(viewer => {
-                                            if (viewer) {
-                                                return viewer.document$().pipe(
-                                                    map((doc: Nullable<GWTDocumentWrapper>) => doc !== null)
-                                                );
-                                            }
-                                            return of(false);
-                                        })
-                                    );
-                                },
-                                handle: () => this.saveAnnotations()
-                            }
+                            action: this.buildSaveAnnotationsAction()
                         },
                         ...DefaultToolbar.CONFIG.menu.menuConfiguration.menuItems.slice(1)
                     ]
@@ -131,6 +108,7 @@ export class AppComponent implements OnInit{
             },
             auxiliaryActions: [
                 ...(DefaultToolbar.CONFIG.auxiliaryActions as any),
+                ToolbarUtils.makeButton(this.buildSaveAnnotationsAction()),
                 ToolbarUtils.makeButton(SWITCH_MODE_ACTION(this.mode$))
             ]
         }
@@ -198,6 +176,33 @@ export class AppComponent implements OnInit{
     pickTemplateDoc(template: OpenFileTemplate) {
         this.displayOpenFile = false;
         this.source = {uri: template.data, password: null};
+    }
+
+    private buildSaveAnnotationsAction() {
+        return {
+            icon: JadiceIcon.DEFAULT_SAVE_ANNO_A,
+            label: {
+                translate: false,
+                content: "Save annotations"
+            },
+            isEnabled$: () => {
+                return interval(150).pipe(
+                    startWith(0),
+                    map(() => this.viewerComponent?.getViewer()),
+                    filter(viewer => !!viewer),
+                    take(1),
+                    switchMap(viewer => {
+                        if (viewer) {
+                            return viewer.document$().pipe(
+                                map((doc: Nullable<GWTDocumentWrapper>) => doc !== null)
+                            );
+                        }
+                        return of(false);
+                    })
+                );
+            },
+            handle: () => this.saveAnnotations()
+        };
     }
 
     private saveAnnotations() {
