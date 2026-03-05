@@ -1,6 +1,6 @@
 {
   "name": "jwv-getting-started-001",
-  "version": "6.72.31",
+  "version": "6.75.24",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
