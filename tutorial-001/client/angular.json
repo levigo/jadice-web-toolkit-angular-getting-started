@@ -25,13 +25,34 @@
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
-            "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@levigo/ngx-webtoolkit/assets",
+                "output": "/assets/ngx-webtoolkit/"
+              },
+              {
+                "glob": "**/*!(.scss)",
+                "input": "./node_modules/@levigo/webtoolkit-ng-client/assets",
+                "output": "/assets/webtoolkit-client/"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@levigo/webtoolkit-ng-client/include",
+                "output": "/precursor/"
+              },
+              {
+                "glob": "**/*!(.scss)",
+                "input": "./node_modules/@levigo/jadice-common-components/assets",
+                "output": "/assets/jadice-common-components/"
+              }
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "./node_modules/@levigo/jadice-web-icons/assets/icon-font.scss",
+              "./node_modules/@levigo/webtoolkit-ng-client/assets/dark-theme.scss"
             ],
             "scripts": []
           },
@@ -40,8 +61,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "1.2mb",
+                  "maximumError": "2mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -70,6 +91,9 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json"
+          },
           "configurations": {
             "production": {
               "buildTarget": "jwv-getting-started:build:production"
@@ -88,5 +112,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }

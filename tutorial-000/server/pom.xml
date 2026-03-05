@@ -4,7 +4,7 @@
 
   <groupId>org.jadice.jwv</groupId>
   <artifactId>jwv-tutorial-000</artifactId>
-  <version>6.23.11</version>
+  <version>6.31.90</version>
 
   <description>Getting Started with the jadice web viewer</description>
   <url>https://levigo.de/info/x/MwLMCg</url>
@@ -18,7 +18,7 @@
     <maven.compiler.target>17</maven.compiler.target>
 
     <!-- levigo dependencies -->
-    <jwv.version>6.23.11</jwv.version>
+    <jwv.version>6.31.90</jwv.version>
 
   </properties>
 
