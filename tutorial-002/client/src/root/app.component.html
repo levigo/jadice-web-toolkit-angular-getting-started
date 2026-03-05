@@ -22,7 +22,10 @@
     <div class="right-sidebar">
         <jwt-annotation-panel [viewerProvider]="viewerComponent"
                               (annotationSelected)="pageSelected($event)"
-                              [annotationProfile]="annotationProfile$ | async">
+                              [annotationProfile]="annotationProfile$ | async"
+                              role="region"
+                              aria-label="Annotation panel area"
+                              aria-braillelabel="Annotation panel area">
         </jwt-annotation-panel>
     </div>
 </div>

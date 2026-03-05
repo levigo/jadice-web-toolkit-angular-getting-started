@@ -22,6 +22,15 @@ spring:
       max-file-size: 50MB
       max-request-size: 50MB
 
+annotation:
+  save:
+    base-url: http://localhost:3000
+    connect-timeout: 30
+    request-timeout: 30
+    authentication:
+      username: user1
+      password: test
+
 webtoolkit:
   clientConfiguration:
     maxUploadFileSize: 50000000
@@ -32,6 +41,13 @@ webtoolkit:
   uriProviderHttpEnabled: true
   annotationProfiles: /jwt-annotation-profile.xml, /jwt-demo-profile.xml
   defaultAnnotationProfile: JWT-Demo-Profile
+
+  ddp:
+    http:
+      authentication:
+        - host: localhost
+          user: user1
+          password: test
 
 logging:
   level:

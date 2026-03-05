@@ -50,3 +50,6 @@ Thumbs.db
 
 #java
 /**/target/**
+
+# tutorial demo runtime artifacts
+/**/test-server-basic-auth/server.log

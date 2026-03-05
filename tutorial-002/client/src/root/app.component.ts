@@ -10,6 +10,7 @@ import {
     DocumentSource,
     GWTDocumentWrapper,
     GWTImageAnnotationWrapper,
+    ServerConnection,
     Viewer,
     ViewerType
 } from "@levigo/webtoolkit-ng-client";
@@ -20,7 +21,7 @@ import {
     ThumbnailPanelComponent,
     UploadDialogsWrapperComponent
 } from "@levigo/ngx-webtoolkit";
-import {BehaviorSubject, map, tap} from "rxjs";
+import {BehaviorSubject, filter, interval, map, of, startWith, switchMap, take, tap} from "rxjs";
 import {MenuItemType, ToolbarConfig, ToolbarUtils} from "@levigo/jadice-common-components";
 import {Nullable} from "@levigo/utility-types";
 import {I18NService} from "@levigo/ngx-translate-support";
@@ -29,6 +30,7 @@ import {DEMO_DOCUMENTS} from "./config/demo-documents";
 import {PILLBOX_CONFIG} from "./config/pillbox-config";
 import {SWITCH_MODE_ACTION} from "./config/switch-mode-action";
 import {I18N} from "@levigo/jadice-i18n-support";
+import {JadiceIcon} from "@levigo/jadice-web-icons";
 
 @Component({
     selector: 'app-root',
@@ -38,6 +40,7 @@ import {I18N} from "@levigo/jadice-i18n-support";
 })
 export class AppComponent implements OnInit{
     readonly DEFAULT_PROFILE = "JWT-Demo-Profile";
+    private static SAVE_ANNOS_MSG_NAME: string = "SAVE_ANNOS";
 
     // The following variables' values are those classes that are defined in the subfolder "config"
     readonly DEMO_DOCUMENTS = DEMO_DOCUMENTS;
@@ -64,7 +67,11 @@ export class AppComponent implements OnInit{
 
     passwordRequiredSource: DocumentSource | null = null;
 
-    source: Nullable<DocumentSource> = null;
+    source: Nullable<DocumentSource | any> = {
+        uris: ["http://localhost:3000/PDFUA.pdf"],
+        annotationUrisList: [["http://localhost:3000/test93.xml"]],
+        password: null
+    };
 
     displayOpenFile: boolean = true;
 
@@ -89,6 +96,33 @@ export class AppComponent implements OnInit{
                                 handle: () => {
                                     this.displayOpenFile = true;
                                 }
+                            }
+                        },
+                        {
+                            type: MenuItemType.ACTION,
+                            action: {
+                                icon: JadiceIcon.DEFAULT_SAVE_ANNO_A,
+                                label: {
+                                    translate: false,
+                                    content: "Save annotations"
+                                },
+                                isEnabled$: () => {
+                                    return interval(150).pipe(
+                                        startWith(0),
+                                        map(() => this.viewerComponent?.getViewer()),
+                                        filter(viewer => !!viewer),
+                                        take(1),
+                                        switchMap(viewer => {
+                                            if (viewer) {
+                                                return viewer.document$().pipe(
+                                                    map((doc: Nullable<GWTDocumentWrapper>) => doc !== null)
+                                                );
+                                            }
+                                            return of(false);
+                                        })
+                                    );
+                                },
+                                handle: () => this.saveAnnotations()
                             }
                         },
                         ...DefaultToolbar.CONFIG.menu.menuConfiguration.menuItems.slice(1)
@@ -164,5 +198,29 @@ export class AppComponent implements OnInit{
     pickTemplateDoc(template: OpenFileTemplate) {
         this.displayOpenFile = false;
         this.source = {uri: template.data, password: null};
+    }
+
+    private saveAnnotations() {
+        this.viewerComponent.getViewer$().pipe(take(1)).subscribe((viewer: any) => {
+            const dto = viewer?.getDocument()?.toSnapshot().toDTO();
+            if (!dto) {
+                return;
+            }
+
+            ServerConnection.get().initConversation(
+                AppComponent.SAVE_ANNOS_MSG_NAME,
+                {
+                    doc: dto,
+                    saveStreamId: "test93.xml",
+                    saveAnnotationsHandlerId: "SaveJadiceAnnotationsHandler",
+                    annoFormat: "JADICE"
+                }
+            ).pipe(
+                take(1),
+                tap(() => {
+                    window.alert("Annotations saved");
+                })
+            ).subscribe();
+        });
     }
 }
