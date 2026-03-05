@@ -14,5 +14,6 @@
     <modules>
         <module>tutorial-000/server</module>
         <module>tutorial-001/server</module>
+        <module>tutorial-002/server</module>
     </modules>
 </project>
