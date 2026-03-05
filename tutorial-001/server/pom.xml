@@ -19,16 +19,35 @@
 
     <!-- levigo dependencies -->
     <jwv.version>6.23.11</jwv.version>
-
   </properties>
 
   <dependencies>
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-      <version>3.0.5</version>
+      <groupId>com.levigo.jadice.webtoolkit</groupId>
+      <artifactId>webtoolkit-ng-server</artifactId>
+      <version>${jwv.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- Let's import the jadice web toolkit bill of material. JWT dependency
+          versions are managed via this BOM. -->
+      <dependency>
+        <groupId>com.levigo.jadice.webtoolkit</groupId>
+        <artifactId>webtoolkit-bom</artifactId>
+        <version>${jwv.version}</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <build>
     <plugins>
