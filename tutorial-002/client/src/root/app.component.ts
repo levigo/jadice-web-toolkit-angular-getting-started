@@ -1,4 +1,5 @@
-import {Component, OnInit, ViewChild} from "@angular/core";
+import {Component, DestroyRef, inject, OnInit, ViewChild} from "@angular/core";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {
     AnnotationCustomizers,
     AnnotationInstanceType,
@@ -21,7 +22,7 @@ import {
     ThumbnailPanelComponent,
     UploadDialogsWrapperComponent
 } from "@levigo/ngx-webtoolkit";
-import {BehaviorSubject, filter, interval, map, of, startWith, switchMap, take, tap} from "rxjs";
+import {BehaviorSubject, distinctUntilChanged, filter, interval, map, of, startWith, switchMap, take, tap} from "rxjs";
 import {MenuItemType, ToolbarConfig, ToolbarUtils} from "@levigo/jadice-common-components";
 import {Nullable} from "@levigo/utility-types";
 import {I18NService} from "@levigo/ngx-translate-support";
@@ -41,6 +42,7 @@ import {JadiceIcon} from "@levigo/jadice-web-icons";
 export class AppComponent implements OnInit{
     readonly DEFAULT_PROFILE = "JWT-Demo-Profile";
     private static SAVE_ANNOS_MSG_NAME: string = "SAVE_ANNOS";
+    private readonly destroyRef = inject(DestroyRef);
 
     // The following variables' values are those classes that are defined in the subfolder "config"
     readonly DEMO_DOCUMENTS = DEMO_DOCUMENTS;
@@ -116,12 +118,16 @@ export class AppComponent implements OnInit{
 
     ngOnInit(): void {
         // This is doing all the wiring for the different events, that can happen when trying to open a file
-        this.viewerComponent.getViewer$().pipe().forEach(v => {
+        this.viewerComponent.getViewer$().pipe(
+            filter((viewer): viewer is Viewer => viewer != null),
+            distinctUntilChanged(),
+            takeUntilDestroyed(this.destroyRef)
+        ).subscribe(v => {
             const wrapper = this.uploadDialogsWrapper;
 
-            v?.addErrorObserver({
+            v.addErrorObserver({
                 complete(): void {
-                    v?.clearErrorObservers();
+                    v.clearErrorObservers();
                 }, error(err: any): void {
                     console.log("while trying to report an error, another error came on top: " + err);
                 }, next(error: any): void {
