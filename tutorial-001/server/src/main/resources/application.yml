@@ -8,7 +8,10 @@ management:
     port: 8000
     addApplicationContextHeader: false
   endpoints:
-    web.exposure.include: "*"
+    web:
+      exposure:
+        include: health, metrics, info
+
   endpoint:
     health:
       show-details: ALWAYS
@@ -27,6 +30,8 @@ webtoolkit:
 
   fileUploadEnabled: true
   uriProviderHttpEnabled: true
+  annotationProfiles: /jwt-annotation-profile.xml, /jwt-demo-profile.xml
+  defaultAnnotationProfile: JWT-Demo-Profile
 
 logging:
   level:
