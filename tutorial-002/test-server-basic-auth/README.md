@@ -62,25 +62,25 @@ When authentication is enabled (`--auth`), all requests to the server will requi
 
 ### File Uploads
 
-The server supports two methods of file uploads:
+The server supports two different upload contracts:
 
-#### 1. Browser Form Upload
+#### 1. Form upload (`?upload`)
 
-Access any directory and use the upload form provided on the directory listing page. This allows you to upload files using a standard HTML form.
-
-#### 2. Command Line Upload
-
-Use curl or any HTTP client to upload files:
+Use this for browser uploads or multipart/form-data requests.
 
 ```bash
-# Form-based upload
 curl -X POST -F "file=@/path/to/your/file.txt" http://localhost:8080/path/to/upload/directory?upload
-
-# Raw binary upload with specific filename
-curl -X POST --data-binary @/path/to/your/file.txt http://localhost:8080/path/to/upload/directory/filename.txt
-
-# With authentication
 curl -X POST -F "file=@/path/to/your/file.txt" -u username:password http://localhost:8080/path/to/upload/directory?upload
+```
+
+#### 2. Raw binary upload (`/{filename}` without `?upload`)
+
+Use this when uploading raw bytes directly to a target filename.
+This is the contract used by `tutorial-002` annotation saving.
+
+```bash
+curl -X POST --data-binary @/path/to/your/file.txt http://localhost:8080/path/to/upload/directory/filename.txt
+curl -X POST --data-binary @./public/test93.xml -u user1:test http://localhost:3000/test93.xml
 ```
 
 ## Security Considerations

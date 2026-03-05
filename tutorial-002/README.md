@@ -46,6 +46,15 @@ npm start
 
 4. Open `http://localhost:4200`.
 
+## Reset Demo Annotation File
+
+Saving annotations updates `tutorial-002/test-server-basic-auth/public/test93.xml`.
+To reset it back to the repository seed version:
+
+```bash
+git restore tutorial-002/test-server-basic-auth/public/test93.xml
+```
+
 ## Verify annotation persistence
 
 1. Open the viewer document.
