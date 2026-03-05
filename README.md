@@ -2,6 +2,5 @@
 
 Steps in this commit:
 
-* add the auto-generated angular files to the .gitignore
-* manually change the version to the most recent versions according to npmjs.com, as far as possible
-* run ```npm install```
+* remove the auto-generated boilerplate from angular to a very simple landing page
+* redirect to the not yet implemented backend after 5 seconds 
