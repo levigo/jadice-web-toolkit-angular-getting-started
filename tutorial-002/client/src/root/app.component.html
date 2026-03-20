@@ -20,13 +20,28 @@
         </overlay-bottom>
     </jwt-multi-mode-viewer>
     <div class="right-sidebar">
-        <jwt-annotation-panel [viewerProvider]="viewerComponent"
-                              (annotationSelected)="pageSelected($event)"
-                              [annotationProfile]="annotationProfile$ | async"
-                              role="region"
-                              aria-label="Annotation panel area"
-                              aria-braillelabel="Annotation panel area">
-        </jwt-annotation-panel>
+        <div class="right-sidebar-content" [ngSwitch]="rightSidebarMode$ | async">
+            <jwt-annotation-panel *ngSwitchCase="'annotations'"
+                                  [viewerProvider]="viewerComponent"
+                                  (annotationSelected)="pageSelected($event)"
+                                  [annotationProfile]="annotationProfile$ | async"
+                                  (closeRequested)="rightSidebarMode$.next('')"
+                                  role="region"
+                                  aria-label="Annotation panel area"
+                                  aria-braillelabel="Annotation panel area">
+            </jwt-annotation-panel>
+            <jwt-advanced-search-panel *ngSwitchCase="'advancedSearch'"
+                                       [viewerProvider]="viewerComponent"
+                                       (closeRequested)="rightSidebarMode$.next('')"
+                                       role="region"
+                                       aria-label="Search panel area"
+                                       aria-braillelabel="Search panel area">
+            </jwt-advanced-search-panel>
+        </div>
+        <jadice-common-toolbar class="right-sidebar-toolbar"
+                               role="complementary"
+                               [config]="RIGHT_TOOLBAR_CONFIG"
+                               [provider]="viewerComponent"></jadice-common-toolbar>
     </div>
 </div>
 <jwt-password-dialog *ngIf="passwordRequiredSource"

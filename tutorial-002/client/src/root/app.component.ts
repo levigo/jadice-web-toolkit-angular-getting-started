@@ -11,6 +11,7 @@ import {
     DocumentSource,
     GWTDocumentWrapper,
     GWTImageAnnotationWrapper,
+    Hotkeys,
     ServerConnection,
     Viewer,
     ViewerType
@@ -22,8 +23,8 @@ import {
     ThumbnailPanelComponent,
     UploadDialogsWrapperComponent
 } from "@levigo/ngx-webtoolkit";
-import {BehaviorSubject, distinctUntilChanged, filter, interval, map, of, startWith, switchMap, take, tap} from "rxjs";
-import {MenuItemType, ToolbarConfig, ToolbarUtils} from "@levigo/jadice-common-components";
+import {BehaviorSubject, distinctUntilChanged, filter, fromEvent, interval, map, of, startWith, switchMap, take, tap} from "rxjs";
+import {Alignment, MenuItemType, ToolbarConfig, ToolbarUtils} from "@levigo/jadice-common-components";
 import {Nullable} from "@levigo/utility-types";
 import {I18NService} from "@levigo/ngx-translate-support";
 import {FLOATING_BUTTON_CONFIG} from "./config/floating-button-config";
@@ -55,6 +56,7 @@ export class AppComponent implements OnInit{
 
     // use the default config and add the button for switching the view mode (normal/accessible)
     TOOLBAR_CONFIG: ToolbarConfig<Viewer>;
+    RIGHT_TOOLBAR_CONFIG: ToolbarConfig<Viewer>;
 
     @ViewChild("viewerComponent", {static: true})
     viewerComponent!: MultiModeViewerComponent;
@@ -76,6 +78,7 @@ export class AppComponent implements OnInit{
     };
 
     displayOpenFile: boolean = true;
+    readonly rightSidebarMode$ = new BehaviorSubject<Nullable<string>>("annotations");
 
     annotations$ = new BehaviorSubject<DocumentAnnotations>([]);
     annotationProfile$ = new BehaviorSubject<Nullable<AnnotationProfile>>(null);
@@ -113,10 +116,48 @@ export class AppComponent implements OnInit{
                 ToolbarUtils.makeButton(this.buildSaveAnnotationsAction()),
                 ToolbarUtils.makeButton(SWITCH_MODE_ACTION(this.mode$))
             ]
-        }
+        };
+        this.RIGHT_TOOLBAR_CONFIG = {
+            alignment: Alignment.VERTICAL,
+            actions: [
+                ToolbarUtils.makeButton(
+                    DefaultActions.Factories.makeEnumAction(
+                        this.rightSidebarMode$,
+                        JadiceIcon.DEFAULT_TEXTSEARCH,
+                        {translate: false, content: "Search"},
+                        "advancedSearch"
+                    )
+                ),
+                ToolbarUtils.makeButton(
+                    DefaultActions.Factories.makeEnumAction(
+                        this.rightSidebarMode$,
+                        JadiceIcon.ANNO_FALLBACK_ICON,
+                        {translate: false, content: "Annotations"},
+                        "annotations"
+                    )
+                )
+            ],
+            auxiliaryActions: [],
+            menu: {
+                display: false,
+                menuConfiguration: {
+                    menuItems: []
+                }
+            }
+        };
     }
 
     ngOnInit(): void {
+        Hotkeys.setViewerProvider(this.viewerComponent);
+
+        fromEvent<CustomEvent<string>>(document, "rightSidebarChange").pipe(
+            map(event => event.detail),
+            filter(detail => detail === "advancedSearch"),
+            takeUntilDestroyed(this.destroyRef)
+        ).subscribe(() => {
+            this.rightSidebarMode$.next("advancedSearch");
+        });
+
         // This is doing all the wiring for the different events, that can happen when trying to open a file
         this.viewerComponent.getViewer$().pipe(
             filter((viewer): viewer is Viewer => viewer != null),
