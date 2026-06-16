@@ -2,7 +2,7 @@
 
 This repository is structured as a step-by-step tutorial history: each commit adds a small functional increment.
 
-The current branch (`main-ng20`) is based on Angular 20 and currently includes:
+The current branch (`main-ng21-jwt7`) targets jadice web toolkit 7 with Angular 21 and currently includes:
 - `tutorial-000`: base Angular + Spring Boot scaffold
 - `tutorial-001`: viewer integration and core features
 - `tutorial-002`: annotation loading and saving with a custom server save handler

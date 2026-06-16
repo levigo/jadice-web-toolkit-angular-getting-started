@@ -1,4 +1,4 @@
-# JWV 6 (Angular): Annotation Loading and Saving
+# JWV 7 (Angular): Annotation Loading and Saving
 
 ## Selection Criteria
 
@@ -41,7 +41,7 @@ Storage target in tutorial:
 Relevant implementation:
 
 - `tutorial-002/client/src/root/app.component.ts`: sends `SAVE_ANNOS` with `SaveJadiceAnnotationsHandler` and `test93.xml`.
-- `tutorial-002/server/src/main/java/org/jadice/jwv/tutorial/annotation/SaveJadiceAnnotationsHandler.java`: serializes annotations and POSTs raw binary data.
+- `tutorial-002/server/src/main/java/org/jadice/jwv/tutorial/annotation/SaveJadiceAnnotationsHandler.java`: serializes annotations and POSTs raw binary data. Annotated with `@Component`; since jadice web toolkit 7 it is auto-registered as save handler.
 - `tutorial-002/server/src/main/resources/application.yml`: contains custom save config (`annotation.save.*`) and auth.
 
 ## Tutorial-003 (Built-in HTTP Handler)

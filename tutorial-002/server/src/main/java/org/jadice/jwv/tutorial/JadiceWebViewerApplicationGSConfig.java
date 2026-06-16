@@ -4,45 +4,33 @@ import java.util.Arrays;
 
 import jakarta.annotation.PostConstruct;
 
-import org.jadice.jwv.tutorial.annotation.SaveJadiceAnnotationsHandler;
 import org.springframework.stereotype.Component;
 
 import com.jadice.web.export.server.ExportHelper;
-import com.levigo.jadice.web.server.internal.AnnotationService;
 
 /**
  * Configuration class for the Jadice Web Viewer application.
  * <p>
  * This class is responsible for setting up and configuring the Jadice Web Viewer
- * application after the Spring context has been initialized. For instance, it registers handlers
- * for saving annotations and configures redaction types.
+ * application after the Spring context has been initialized. For instance, it configures
+ * the supported redaction types for the export pipeline.
+ * </p>
+ * <p>
+ * Since jadice web toolkit 7, a {@link com.levigo.jadice.web.server.annotation.save.SaveAnnotationsHandler}
+ * implementation annotated with {@link Component} is auto-registered. Earlier versions required
+ * an explicit {@code AnnotationService.registerSaveAnnotationsHandler(handler, id)} call here;
+ * that call is no longer needed.
  * </p>
  */
 @Component
 public class JadiceWebViewerApplicationGSConfig {
-    private final AnnotationService annotationService;
-    private final SaveJadiceAnnotationsHandler saveJadiceAnnotationsHandler;
-
-    public JadiceWebViewerApplicationGSConfig(final AnnotationService annotationService,
-                                              final SaveJadiceAnnotationsHandler saveJadiceAnnotationsHandler) {
-        this.annotationService = annotationService;
-        this.saveJadiceAnnotationsHandler = saveJadiceAnnotationsHandler;
-    }
 
     /**
      * Initializes the Jadice Web Viewer application configuration after the Spring context
-     * has been fully initialized.
-     * <p>
-     * This method performs the following configuration tasks:
-     * <ul>
-     *   <li>Registers the {@link SaveJadiceAnnotationsHandler} for saving annotations</li>
-     *   <li>Configures supported redaction types</li>
-     * </ul>
-     * </p>
+     * has been fully initialized. Configures the supported redaction types.
      */
     @PostConstruct
     public void postConstruct() {
-        annotationService.registerSaveAnnotationsHandler(saveJadiceAnnotationsHandler, "SaveJadiceAnnotationsHandler");
         ExportHelper.setRedactionTypes(Arrays.asList("Mask", "TextMask"));
     }
 }

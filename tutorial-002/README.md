@@ -1,6 +1,6 @@
 # Tutorial 002: Annotation Loading and Saving
 
-This tutorial extends the Angular 20 baseline and demonstrates how to:
+This tutorial extends the Angular 21 / jadice web toolkit 7 baseline and demonstrates how to:
 - load annotations from an external URI
 - save annotations via a custom server-side save handler
 - use a simple storage server with basic auth for local testing
@@ -20,8 +20,7 @@ This tutorial extends the Angular 20 baseline and demonstrates how to:
   - `annoFormat: "JADICE"`
 - Server-side save handler posts raw binary annotation data to:
   - `http://localhost:3000/test93.xml` (without `?upload`)
-- Server registers `SaveJadiceAnnotationsHandler` in:
-  - `JadiceWebViewerApplicationGSConfig`
+- Server-side `SaveJadiceAnnotationsHandler` is annotated with `@Component`; jadice web toolkit 7 auto-registers it as save handler (no manual registration needed).
 - Server save endpoint and auth are configured in:
   - `tutorial-002/server/src/main/resources/application.yml`
 
@@ -33,6 +32,10 @@ cd tutorial-002/test-server-basic-auth
 npm i
 node static-server.js --port 3000 --dir ./public --auth --username user1 --password test
 ```
+
+The credentials (`user1` / `test`) match what the Spring Boot backend has in
+`tutorial-002/server/src/main/resources/application.yml` under the save-handler config,
+so saving annotations from the client also works.
 
 2. Start the Spring Boot backend (`tutorial-002/server`) using main class:
 `org.jadice.jwv.tutorial.JadiceWebViewerApplication002`
@@ -67,7 +70,7 @@ git restore tutorial-002/test-server-basic-auth/public/test93.xml
 
 - Client wiring: `tutorial-002/client/src/root/app.component.ts`
 - Annotation panel template: `tutorial-002/client/src/root/app.component.html`
-- Save handler registration: `tutorial-002/server/src/main/java/org/jadice/jwv/tutorial/JadiceWebViewerApplicationGSConfig.java`
-- Save handler implementation: `tutorial-002/server/src/main/java/org/jadice/jwv/tutorial/annotation/SaveJadiceAnnotationsHandler.java`
+- Save handler implementation (auto-registered via `@Component`): `tutorial-002/server/src/main/java/org/jadice/jwv/tutorial/annotation/SaveJadiceAnnotationsHandler.java`
+- Post-bootstrap configuration (redaction types): `tutorial-002/server/src/main/java/org/jadice/jwv/tutorial/JadiceWebViewerApplicationGSConfig.java`
 - Server properties: `tutorial-002/server/src/main/resources/application.yml`
 - Demo storage server: `tutorial-002/test-server-basic-auth/static-server.js`

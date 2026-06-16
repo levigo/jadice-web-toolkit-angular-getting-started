@@ -4,7 +4,7 @@
 
   <groupId>org.jadice.jwv</groupId>
   <artifactId>jwv-tutorial-002</artifactId>
-  <version>6.75.24</version>
+  <version>7.8.3</version>
 
   <description>Getting Started with the jadice web viewer</description>
   <url>https://levigo.de/info/x/MwLMCg</url>
@@ -18,7 +18,7 @@
     <maven.compiler.target>17</maven.compiler.target>
 
     <!-- levigo dependencies -->
-    <jwv.version>6.75.24</jwv.version>
+    <jwv.version>7.8.3</jwv.version>
   </properties>
 
   <dependencies>
@@ -74,9 +74,22 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+            </path>
+          </annotationProcessorPaths>
+          <annotationProcessorPathsUseDepMgmt>true</annotationProcessorPathsUseDepMgmt>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>3.5.4</version>
+        <version>4.1.0</version>
         <executions>
           <execution>
             <goals>

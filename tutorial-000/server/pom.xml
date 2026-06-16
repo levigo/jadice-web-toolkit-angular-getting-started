@@ -4,7 +4,7 @@
 
   <groupId>org.jadice.jwv</groupId>
   <artifactId>jwv-tutorial-000</artifactId>
-  <version>6.75.24</version>
+  <version>7.8.3</version>
 
   <description>Getting Started with the jadice web viewer</description>
   <url>https://levigo.de/info/x/MwLMCg</url>
@@ -18,7 +18,7 @@
     <maven.compiler.target>17</maven.compiler.target>
 
     <!-- levigo dependencies -->
-    <jwv.version>6.75.24</jwv.version>
+    <jwv.version>7.8.3</jwv.version>
 
   </properties>
 
@@ -26,7 +26,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
-      <version>3.5.9</version>
+      <version>4.1.0</version>
     </dependency>
   </dependencies>
 
@@ -35,7 +35,7 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>3.5.9</version>
+        <version>4.1.0</version>
         <executions>
           <execution>
             <goals>

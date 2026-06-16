@@ -31,6 +31,10 @@ npm i
 node static-server.js --port 3000 --dir ./public --auth --username user1 --password test
 ```
 
+The credentials (`user1` / `test`) match what the Spring Boot backend has in
+`tutorial-003/server/src/main/resources/application.yml` under
+`webtoolkit.annotation.save.http.*`, so saving annotations from the client also works.
+
 2. Start the Spring Boot backend (`tutorial-003/server`) using main class:
 `org.jadice.jwv.tutorial.JadiceWebViewerApplication003`
 
