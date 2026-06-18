@@ -52,5 +52,5 @@
                      [templates]="DEMO_DOCUMENTS"
                      (fileRequested)="openFile($event)"
                      (templateRequested)="pickTemplateDoc($event)"
-                     (closeRequested)="displayOpenFile = false"></jwt-open-file-modal>
+                     (closeRequested)="hideOpenFileModal()"></jwt-open-file-modal>
 <jwt-upload-dialogs-wrapper #uploadDialogsWrapper></jwt-upload-dialogs-wrapper>

@@ -1,4 +1,4 @@
-import {Component, DestroyRef, inject, OnInit, ViewChild} from "@angular/core";
+import {ChangeDetectorRef, Component, DestroyRef, inject, OnInit, ViewChild} from "@angular/core";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {
     AnnotationCustomizers,
@@ -83,7 +83,7 @@ export class AppComponent implements OnInit{
     annotations$ = new BehaviorSubject<DocumentAnnotations>([]);
     annotationProfile$ = new BehaviorSubject<Nullable<AnnotationProfile>>(null);
 
-    constructor(private i18n: I18NService) {
+    constructor(private i18n: I18NService, private changeDetectorRef: ChangeDetectorRef) {
         i18n.init();
         this.setupAnnotations();
         // configures the toolbar, esp. for a correct file opening and a correct switch between normal / accessible mode
@@ -98,9 +98,7 @@ export class AppComponent implements OnInit{
                             type: MenuItemType.ACTION,
                             action: {
                                 ...DefaultActions.OPEN_FILE,
-                                handle: () => {
-                                    this.displayOpenFile = true;
-                                }
+                                handle: () => this.showOpenFileModal()
                             }
                         },
                         {
@@ -209,9 +207,18 @@ export class AppComponent implements OnInit{
         this.source = source;
     }
 
+    showOpenFileModal() {
+        this.displayOpenFile = true;
+        this.changeDetectorRef.detectChanges();
+    }
+
+    hideOpenFileModal() {
+        this.displayOpenFile = false;
+        this.changeDetectorRef.detectChanges();
+    }
 
     async openFile(file: File) {
-        this.displayOpenFile = false;
+        this.hideOpenFileModal();
 
         this.uploadDialogsWrapper.openFile(file).then(s => {
             if (s != null) {
@@ -221,7 +228,7 @@ export class AppComponent implements OnInit{
     }
 
     pickTemplateDoc(template: OpenFileTemplate) {
-        this.displayOpenFile = false;
+        this.hideOpenFileModal();
         this.source = {uri: template.data, password: null};
     }
 
