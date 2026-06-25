@@ -1112,9 +1112,6 @@
            propertyType="java.lang.Boolean">
       <default>true</default>
     </fixed>
-    <fixed name="allowRotation" propertyType="java.lang.Boolean">
-      <default>true</default>
-    </fixed>
     <fixed name="filled" propertyType="java.lang.Boolean">
       <default>true</default>
     </fixed>
