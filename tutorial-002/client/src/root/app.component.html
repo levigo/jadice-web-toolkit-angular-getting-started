@@ -1,10 +1,11 @@
 <jadice-common-toolbar [provider]="viewerComponent" [config]="TOOLBAR_CONFIG"></jadice-common-toolbar>
 <div class="main-row">
-    <div class="sidebar">
+    <div class="sidebar" *ngIf="thumbnailsVisible$ | async">
         <jwt-thumbnail-panel #thumbnailPanelComponent
                              [viewerProvider]="viewerComponent"
                              [document]="currentDocument"
-                             (pageClicked)="pageSelected($event)"></jwt-thumbnail-panel>
+                             (pageClicked)="pageSelected($event)"
+                             (closeRequested)="thumbnailsVisible$.next(false)"></jwt-thumbnail-panel>
     </div>
     <jwt-multi-mode-viewer #viewerComponent
                            (sourceChanged)="source = $event"
@@ -12,6 +13,9 @@
                            (passwordRequired)="passwordRequiredSource = $event"
                            [mode]="(vieweType$ | async)"
                            [source]="source">
+        <overlay-bottom-left>
+            <jadice-common-button [provider]="viewerComponent" [config]="TOGGLE_THUMBNAILS_BUTTON"></jadice-common-button>
+        </overlay-bottom-left>
         <overlay-bottom-right>
             <jadice-common-button *ngIf="!(mode$ | async)" [provider]="viewerComponent" [config]="FLOATING_BUTTON_CONFIG"></jadice-common-button>
         </overlay-bottom-right>

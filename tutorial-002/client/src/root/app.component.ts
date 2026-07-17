@@ -24,7 +24,7 @@ import {
     UploadDialogsWrapperComponent
 } from "@levigo/ngx-webtoolkit";
 import {BehaviorSubject, distinctUntilChanged, filter, fromEvent, interval, map, of, startWith, switchMap, take, tap} from "rxjs";
-import {Alignment, MenuItemType, ToolbarConfig, ToolbarUtils} from "@levigo/jadice-common-components";
+import {Alignment, ButtonConfig, ButtonType, MenuItemType, ToolbarConfig, ToolbarUtils} from "@levigo/jadice-common-components";
 import {Nullable} from "@levigo/utility-types";
 import {I18NService} from "@levigo/ngx-translate-support";
 import {FLOATING_BUTTON_CONFIG} from "./config/floating-button-config";
@@ -79,6 +79,17 @@ export class AppComponent implements OnInit{
 
     displayOpenFile: boolean = true;
     readonly rightSidebarMode$ = new BehaviorSubject<Nullable<string>>("annotations");
+    // Controls visibility of the left page-navigator (thumbnail) sidebar.
+    readonly thumbnailsVisible$ = new BehaviorSubject<boolean>(true);
+    // Bottom-left overlay button that toggles the page-navigator sidebar.
+    readonly TOGGLE_THUMBNAILS_BUTTON: ButtonConfig<Viewer> = {
+        type: ButtonType.SINGLE_ACTION,
+        action: DefaultActions.Factories.makeToggleAction(
+            this.thumbnailsVisible$,
+            JadiceIcon.PAGE_VIEW_LEFT,
+            {translate: false, content: "Page navigator"}
+        )
+    };
 
     annotations$ = new BehaviorSubject<DocumentAnnotations>([]);
     annotationProfile$ = new BehaviorSubject<Nullable<AnnotationProfile>>(null);
@@ -147,6 +158,17 @@ export class AppComponent implements OnInit{
 
     ngOnInit(): void {
         Hotkeys.setViewerProvider(this.viewerComponent);
+
+        // Re-fit the viewer whenever a side panel opens or closes (see relayoutViewer).
+        this.rightSidebarMode$.pipe(
+            distinctUntilChanged(),
+            takeUntilDestroyed(this.destroyRef)
+        ).subscribe(() => this.relayoutViewer());
+
+        this.thumbnailsVisible$.pipe(
+            distinctUntilChanged(),
+            takeUntilDestroyed(this.destroyRef)
+        ).subscribe(() => this.relayoutViewer());
 
         fromEvent<CustomEvent<string>>(document, "rightSidebarChange").pipe(
             map(event => event.detail),
@@ -232,6 +254,12 @@ export class AppComponent implements OnInit{
         this.source = {uri: template.data, password: null};
     }
 
+    // The viewer does not observe its container; after a side panel toggles, tell it to recalculate
+    // its size once the DOM has updated so the page fit and scrollbar realign.
+    private relayoutViewer() {
+        setTimeout(() => this.viewerComponent?.recalculateSize());
+    }
+
     private buildSaveAnnotationsAction() {
         return {
             icon: JadiceIcon.DEFAULT_SAVE_ANNO_A,
@@ -261,7 +289,10 @@ export class AppComponent implements OnInit{
 
     private saveAnnotations() {
         this.viewerComponent.getViewer$().pipe(take(1)).subscribe((viewer: any) => {
-            const dto = viewer?.getDocument()?.toSnapshot().toDTO();
+            // getTransferableDocument() (unlike getDocument()) attaches the current render controls
+            // as the "serializedRenderControls" document property for the handler to persist.
+            // Only the rendered (GWT) viewer attaches them, not accessible mode.
+            const dto = viewer?.getTransferableDocument()?.toSnapshot().toDTO();
             if (!dto) {
                 return;
             }

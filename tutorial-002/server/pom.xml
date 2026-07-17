@@ -18,7 +18,7 @@
     <maven.compiler.target>17</maven.compiler.target>
 
     <!-- levigo dependencies -->
-    <jwv.version>7.8.7</jwv.version>
+    <jwv.version>7.8.14</jwv.version>
   </properties>
 
   <dependencies>
