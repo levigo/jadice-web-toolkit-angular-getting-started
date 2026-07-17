@@ -31,6 +31,15 @@ annotation:
       username: user1
       password: test
 
+# Restore render controls (rotation, gradation curve) when a document is loaded.
+# The JSON is fetched server-side and attached to the document before it is read
+# (see RenderControlsHttpSchemeDocumentDataProvider). Authentication for this URL is
+# taken from webtoolkit.ddp.http.authentication below.
+render-controls:
+  load:
+    enabled: true
+    uri: http://localhost:3000/test93.rendercontrols.json
+
 webtoolkit:
   clientConfiguration:
     maxUploadFileSize: 50000000
@@ -38,7 +47,7 @@ webtoolkit:
       displayOpenFileAtStartup: "false"
 
   fileUploadEnabled: true
-  uriProviderHttpEnabled: true
+  uriProviderHttpEnabled: false
   annotationProfiles: /jwt-annotation-profile.xml, /jwt-demo-profile.xml
   defaultAnnotationProfile: JWT-Demo-Profile
 

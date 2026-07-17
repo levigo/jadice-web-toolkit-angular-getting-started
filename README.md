@@ -50,7 +50,7 @@ git log --oneline --reverse
    ```
 4. Open `http://localhost:4200`, add or edit an annotation, click save (toolbar or menu), then reload to verify persistence.
 
-The repo ships `tutorial-002/test-server-basic-auth/public/test93.xml`, so annotation loading works on first run.
+The repo ships `tutorial-002/test-server-basic-auth/public/test93.xml`, so annotation loading works on first run. It also ships `test93.rendercontrols.json`, so the document loads with its stored render controls (the first page rotated 90°) applied on load, and rotations you make in the client are saved back together with the annotations.
 
 Detailed tutorial-002 notes are in `tutorial-002/README.md`.
 
