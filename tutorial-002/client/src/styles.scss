@@ -1,6 +1,6 @@
 @import "styles/typeface";
 @import "styles/material-restyle.scss";
-@import "assets/themes/light-theme.scss";
+@import "assets/themes/dark-theme.scss";
 
 html, body {
     width: 100%;
@@ -8,4 +8,11 @@ html, body {
     padding: 0;
     margin: 0;
     font-family: "Source Sans Pro", sans-serif;
+}
+
+// Hide the "show advanced search" (three-dots) button in the Simple Search popup.
+// The popup is appended to document.body, so this must be a global rule; the button
+// exposes a CSS shadow part, so no shadow-DOM piercing is needed.
+jadice-simple-search-panel::part(advance-search) {
+    display: none;
 }

@@ -90,6 +90,8 @@ export class AppComponent implements OnInit{
             {translate: false, content: "Page navigator"}
         )
     };
+    // Simple Search action, shared by the toolbar button and the Ctrl+F hotkey.
+    private readonly simpleSearchAction = DefaultActions.SHOW_SIMPLE_SEARCH_PANEL(Hotkeys.getViewerProvider$());
 
     annotations$ = new BehaviorSubject<DocumentAnnotations>([]);
     annotationProfile$ = new BehaviorSubject<Nullable<AnnotationProfile>>(null);
@@ -122,6 +124,12 @@ export class AppComponent implements OnInit{
             },
             auxiliaryActions: [
                 ...(DefaultToolbar.CONFIG.auxiliaryActions as any),
+                // Simple Search: built-in action that opens the SimpleSearchPanel as a floating popup
+                // (closes on Escape / click-away). The viewer provider is the one set on Hotkeys in ngOnInit.
+                ToolbarUtils.makeButton({
+                    ...this.simpleSearchAction,
+                    label: {translate: false, content: "Simple search"}
+                }),
                 ToolbarUtils.makeButton(this.buildSaveAnnotationsAction()),
                 ToolbarUtils.makeButton(SWITCH_MODE_ACTION(this.mode$))
             ]
@@ -158,6 +166,44 @@ export class AppComponent implements OnInit{
 
     ngOnInit(): void {
         Hotkeys.setViewerProvider(this.viewerComponent);
+
+        // Hide the "clear input" (x) button in the Simple Search popup. Unlike the "advanced search"
+        // button it is not exposed as a CSS shadow part, so a global ::part rule cannot reach it. The
+        // popup is created on demand and appended to document.body, so inject a style into its shadow
+        // root whenever it appears.
+        const simpleSearchStyleObserver = new MutationObserver(mutations => {
+            mutations.forEach(mutation => mutation.addedNodes.forEach(node => {
+                if (node instanceof HTMLElement
+                    && node.tagName.toLowerCase() === "jadice-simple-search-panel"
+                    && node.shadowRoot) {
+                    const style = document.createElement("style");
+                    style.textContent = ".button.clear { display: none; }";
+                    node.shadowRoot.appendChild(style);
+                }
+            }));
+        });
+        simpleSearchStyleObserver.observe(document.body, {childList: true});
+        this.destroyRef.onDestroy(() => simpleSearchStyleObserver.disconnect());
+
+        // Ctrl+F (Cmd+F) opens the Simple Search popup instead of the browser's native find.
+        fromEvent<KeyboardEvent>(document, "keydown").pipe(
+            filter(event => (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "f"),
+            takeUntilDestroyed(this.destroyRef)
+        ).subscribe(event => {
+            const viewer = this.viewerComponent.getViewer();
+            // Only act when a document is loaded (mirrors the toolbar button's enabled state).
+            if (!viewer || !viewer.getDocument()) {
+                return;
+            }
+            event.preventDefault();
+            // Don't stack popups: if one is already open, focus it instead of opening another.
+            const existingPopup = document.body.querySelector("jadice-simple-search-panel");
+            if (existingPopup instanceof HTMLElement) {
+                existingPopup.focus();
+                return;
+            }
+            this.simpleSearchAction.handle?.(viewer);
+        });
 
         // Re-fit the viewer whenever a side panel opens or closes (see relayoutViewer).
         this.rightSidebarMode$.pipe(
